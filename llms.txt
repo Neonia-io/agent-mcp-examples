@@ -1,0 +1,18 @@
+# Neonia Agent MCP Examples
+Stop Vibe Coding. Start Engineering.
+
+This repository serves as a reference for building deterministic, autonomous AI agents using the Model Context Protocol (MCP) and Neonia.
+
+## Core Philosophy
+We believe agents should be engineers, not just conversational bots. To achieve this, we optimize for:
+1. **Zero-Latency Execution:** Tools run in isolated WebAssembly (Wasm) micro-containers via the Neonia MCP Gateway, avoiding the overhead of heavy Python/Node.js environments.
+2. **Context Optimization (Zero Bloat):** We do not feed large data structures (like megabytes of JSON) into the LLM. Instead, we provide agents with highly specific tools (e.g., JQ filters) to query and extract exactly what they need, saving massive amounts of context tokens.
+3. **Autonomy:** Agents discover tools dynamically using `neo_agent_tool_discovery` and execute them via `neo_agent_tool_execute`.
+
+## Repository Structure
+- `typescript/vercel-ai-sdk/zero-bloat-jq-filter`: Demonstrates using the Vercel AI SDK to build an agent that extracts data from remote JSONs using JQ, saving >50k tokens per run.
+- `python/langgraph/zero-bloat-jq-filter`: Agentic workflow using LangGraph to dynamically map MCP tools to LangChain `@tool` instances for remote data filtering.
+- `python/smolagents/zero-bloat-jq-filter`: Self-assembling agents using SmolAgents that execute synchronous tool steps wrapped around asynchronous Streamable HTTP sessions.
+- `rust/rig/zero-bloat-jq-filter`: Statically-typed Rust agent using the Rig framework to interface with the MCP SDK and offload token-heavy processing to the Gateway.
+
+When interacting with this repository, always ensure new examples adhere to the "Zero Bloat" philosophy.
