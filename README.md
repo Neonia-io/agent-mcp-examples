@@ -6,44 +6,48 @@ A collection of autonomous agent examples demonstrating how to integrate the **N
 
 This repository will continuously grow with new patterns demonstrating deterministic, high-performance AI agents.
 
-Our first major showcase focuses on solving a critical problem in modern agent architectures: **Context Window Bloat**.
+Our first major showcases focus on solving two critical problems in modern agent architectures: **Context Window Bloat** and **Tool Rigidity**.
 
-Traditionally, when an agent needs to extract data from a large 5MB JSON file, it loads the entire file into its context window, causing massive token consumption, high latency, and LLM "amnesia".
+#### 1. Solving Tool Rigidity (Auto-Pilot Discovery)
 
-By connecting to the Neonia MCP Gateway (`mcp.neonia.io/mcp?tools=neo_data_jq_filter`), our `zero-bloat-jq-filter` agents explicitly bind the **Wasm-powered JQ Filter** tool. The agent executes queries on the remote server and receives only the filtered result (e.g. `$651,758.23`), saving **~50,000+ tokens** per request and responding almost instantly.
+Agents are traditionally hard-coded with a static list of tools. If a user asks for something outside that list, the agent hallucinates or fails. The `auto-discovery-url-to-markdown` examples demonstrate how to give your agents true autonomy. By connecting to the Neonia Gateway, the agent can dynamically search for missing capabilities, read the tool's schema, and execute it on the fly without human intervention.
+
+#### 2. Solving Context Bloat (Zero-Bloat Data Processing)
+
+Traditionally, when an agent needs to extract data from a large 5MB JSON file, it loads the entire file into its context window, causing massive token consumption, high latency, and LLM "amnesia". By connecting to the Neonia MCP Gateway (`mcp.neonia.io/mcp?tools=neo_data_jq_filter`), our `zero-bloat-jq-filter` agents explicitly bind the **Wasm-powered JQ Filter** tool. The agent executes queries on the remote server and receives only the filtered result (e.g. `$651,758.23`), saving **~50,000+ tokens** per request and responding almost instantly.
 
 _(More examples covering vision extraction, dynamic execution, and multi-agent orchestration will be added soon!)_
 
 ## Examples Provided
 
-This repository includes the "Zero-Bloat JQ Filter" implementation across 4 major agentic frameworks in 3 different languages:
+This repository includes implementations of "Zero-Bloat Data Processing" and "Auto-Pilot Tool Discovery" across 4 major agentic frameworks in 3 different languages:
 
 ### 1. Python (LangGraph)
 
 A deterministic workflow using **LangChain** and **LangGraph** to build a reactive agent (`create_agent`) that dynamically wraps MCP capabilities into native LangChain `@tool` instances.
 
-- **Directory**: `python/langgraph/zero-bloat-jq-filter`
+- **Directories**: `python/langgraph/zero-bloat-jq-filter`, `python/langgraph/auto-discovery-url-to-markdown`
 - **Setup**: `uv sync && uv run python agent.py`
 
 ### 2. Python (SmolAgents)
 
 A self-assembling agent using Hugging Face's **SmolAgents** and **LiteLLM**. Demonstrates subclassing `smolagents.Tool` for synchronous forward execution wrapped around an asynchronous Streamable HTTP session.
 
-- **Directory**: `python/smolagents/zero-bloat-jq-filter`
+- **Directories**: `python/smolagents/zero-bloat-jq-filter`, `python/smolagents/auto-discovery-url-to-markdown`
 - **Setup**: `uv sync && uv run python main.py`
 
 ### 3. TypeScript (Vercel AI SDK)
 
 An integration with the **Vercel AI SDK** utilizing the official `@modelcontextprotocol/sdk` and `@openrouter/ai-sdk-provider`. Demonstrates proper multi-turn tool calling and schema mapping for Claude 3.7 Sonnet.
 
-- **Directory**: `typescript/vercel-ai-sdk/zero-bloat-jq-filter`
+- **Directories**: `typescript/vercel-ai-sdk/zero-bloat-jq-filter`, `typescript/vercel-ai-sdk/auto-discovery-url-to-markdown`
 - **Setup**: `npm install && npm start`
 
 ### 4. Rust (Rig)
 
 A statically-typed integration using the **Rig** agent framework and `rust-mcp-sdk`. Demonstrates bridging an initialized MCP client session into Rust's strong type system.
 
-- **Directory**: `rust/rig/zero-bloat-jq-filter`
+- **Directories**: `rust/rig/zero-bloat-jq-filter`, `rust/rig/auto-discovery-url-to-markdown`
 - **Setup**: `cargo run`
 
 ## Prerequisites
@@ -61,22 +65,39 @@ Configure these in the `.env` file within the specific example directory you wis
 agent-mcp-examples/
 ├── typescript/                 # TypeScript Ecosystem
 │   └── vercel-ai-sdk/          # Vercel AI SDK Framework
-│       └── zero-bloat-jq-filter/   # Agentic Data Processing
+│       ├── zero-bloat-jq-filter/           # Agentic Data Processing
+│       └── auto-discovery-url-to-markdown/ # Auto-Pilot Tool Discovery
 │
 ├── python/                     # Python Ecosystem
 │   ├── langgraph/              # LangGraph Framework
-│   │   └── zero-bloat-jq-filter/
+│   │   ├── zero-bloat-jq-filter/
+│   │   └── auto-discovery-url-to-markdown/
 │   └── smolagents/             # SmolAgents Framework
-│       └── zero-bloat-jq-filter/
+│       ├── zero-bloat-jq-filter/
+│       └── auto-discovery-url-to-markdown/
 │
 └── rust/                       # Rust Ecosystem
     └── rig/                    # Rig Framework
-        └── zero-bloat-jq-filter/
+        ├── zero-bloat-jq-filter/
+        └── auto-discovery-url-to-markdown/
 ```
 
 ## Available Examples
 
-Each example is self-contained and demonstrates the "Zero-Bloat" architectural pattern using the JQ filter tool over MCP.
+Each example is self-contained and demonstrates specific, production-ready architectural patterns over MCP.
+
+### 1. Auto-Pilot Tool Discovery (`auto-discovery-url-to-markdown`)
+
+Demonstrates how to give agents true autonomy. If an agent lacks a required capability, it dynamically searches the Neonia Gateway for a matching tool, reads its parameters, and executes it on the fly without human intervention.
+
+- 📂 **[auto-discovery-url-to-markdown](./typescript/vercel-ai-sdk/auto-discovery-url-to-markdown/) (TypeScript / Vercel AI SDK)**
+- 📂 **[auto-discovery-url-to-markdown](./python/langgraph/auto-discovery-url-to-markdown/) (Python / LangGraph)**
+- 📂 **[auto-discovery-url-to-markdown](./python/smolagents/auto-discovery-url-to-markdown/) (Python / SmolAgents)**
+- 📂 **[auto-discovery-url-to-markdown](./rust/rig/auto-discovery-url-to-markdown/) (Rust / Rig)**
+
+### 2. Zero-Bloat Data Processing (`zero-bloat-jq-filter`)
+
+Demonstrates how to safely process massive API payloads using a deterministic Wasm JQ filter at the edge, drastically reducing LLM token context usage and preventing hallucination.
 
 - 📂 **[zero-bloat-jq-filter](./typescript/vercel-ai-sdk/zero-bloat-jq-filter/) (TypeScript / Vercel AI SDK)**
 - 📂 **[zero-bloat-jq-filter](./python/langgraph/zero-bloat-jq-filter/) (Python / LangGraph)**
