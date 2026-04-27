@@ -13,6 +13,7 @@ Traditionally, AI agents are hard-coded with a static list of tools. If a user a
 ## The Neonia Solution: Auto-Pilot Discovery
 
 Instead of pre-loading tools, this agent is equipped with only two meta-tools from the Neonia MCP Gateway:
+
 - `neo_agent_tool_discovery`: Searches the global Neonia registry for missing capabilities.
 - `neo_agent_tool_execute`: Dynamically executes the discovered tool using its required JSON payload.
 
@@ -46,7 +47,12 @@ When asked to summarize the `neonia.io` webpage, the agent realizes it lacks a w
    NEONIA_API_KEY="your-neonia-key"
    ```
 
-3. Run the agent:
+3. Enable Auto-Pilot Permissions:
+   Before running the agent, you **MUST** enable the **Auto-Pilot (Dynamic Tool Execution)** permission in your Neonia Dashboard. This authorizes the agent to dynamically execute tools it discovers on the fly.
+
+   ![Agent Permissions](../../../assets/Agent_Permissions.png)
+
+4. Run the agent:
 
    ```bash
    uv run python main.py
