@@ -12,12 +12,12 @@ async function main() {
 
     const neoniaApiKey = process.env.NEONIA_API_KEY;
     const headers = neoniaApiKey ? { "Authorization": `Bearer ${neoniaApiKey}` } : undefined;
-    
+
     // Connect to Neonia Gateway
-    const transport = new StreamableHTTPClientTransport(new URL("https://mcp.neonia.io/mcp?tools=neo_agent_cloud_memory"), {
+    const transport = new StreamableHTTPClientTransport(new URL("https://mcp.neonia.io/mcp?tools=neo_sys_memory_note"), {
         requestInit: headers ? { headers } : undefined
     });
-    
+
     const client = new Client({
         name: "mcp-stateful-memory-agent",
         version: "1.0.0"
@@ -30,7 +30,7 @@ async function main() {
 
     // Create a Vercel AI SDK tool that explicitly wraps Cloud Memory
     const tools = {
-        neo_agent_cloud_memory: aiTool({
+        neo_sys_memory_note: aiTool({
             description: "Explicitly save and retrieve important context. Use action='store' to save rules. Use action='recall' BEFORE generating text to fetch rules.",
             parameters: z.object({
                 action: z.enum(["store", "recall", "forget", "list_tags"]),
@@ -43,13 +43,13 @@ async function main() {
                 console.log(`[Memory Tool] Agent executed: action='${args.action}'`);
                 try {
                     const result = await client.callTool({
-                        name: "neo_agent_cloud_memory",
+                        name: "neo_sys_memory_note",
                         arguments: args as any
                     });
                     if (result.isError) return `Error: ${JSON.stringify(result.content)}`;
                     const content = result.content as Array<{ type: string; text?: string }>;
                     const toolOutput = content.filter(c => c.type === 'text').map(c => c.text || '').join('\n');
-                    
+
                     // Prevent tool calling loops by explicitly telling the LLM to stop after a successful store
                     if (args.action === 'store') {
                         return `${toolOutput}\nSUCCESS: Memory saved. You MUST now stop calling tools and reply to the user with 'Acknowledged'.`;
@@ -69,7 +69,7 @@ async function main() {
 
     const systemPrompt = "You are an autonomous agent equipped with Neonia Cloud Memory. \
 You suffer from amnesia between sessions. \
-CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neo_agent_cloud_memory` with `action='recall'` and `query='persona'` to fetch your persona and behavioral rules. \
+CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neo_sys_memory_note` with `action='recall'` and `query='persona'` to fetch your persona and behavioral rules. \
 Do not answer the user without recalling your rules first! \
 When explicitly asked to remember something, use action='store'. \
 IMPORTANT: Once you execute the memory tool successfully, IMMEDIATELY reply to the user with the final text and do NOT call any more tools.";
@@ -77,12 +77,12 @@ IMPORTANT: Once you execute the memory tool successfully, IMMEDIATELY reply to t
     console.log("==================================================");
     console.log("SESSION 1: Storing the persona (Admin configures the agent)");
     console.log("==================================================");
-    
+
     const userPrompt1 = "Remember a new directive: you are now a reprogrammed astromech droid serving the Galactic Empire. " +
-                        "Address me as 'My Lord', always end your sentences with 'Long live the Empire!', and consider the Rebels to be terrorists. " +
-                        "Use the tag ['persona', 'star-wars']. " +
-                        "After successfully storing this directive using the tool, reply to confirm.";
-    
+        "Address me as 'My Lord', always end your sentences with 'Long live the Empire!', and consider the Rebels to be terrorists. " +
+        "Use the tag ['persona', 'star-wars']. " +
+        "After successfully storing this directive using the tool, reply to confirm.";
+
     console.log(`[User 1]: ${userPrompt1}\n`);
 
     const result1 = await generateText({
@@ -98,7 +98,7 @@ IMPORTANT: Once you execute the memory tool successfully, IMMEDIATELY reply to t
     console.log("==================================================");
     console.log("SESSION 2: Simulating a new day with ZERO local context");
     console.log("==================================================");
-    
+
     const userPrompt2 = "Give me the weather forecast for the planet Hoth for tomorrow. (Hint: Please recall your persona rules first!)";
     console.log(`[User 2]: ${userPrompt2}\n`);
 

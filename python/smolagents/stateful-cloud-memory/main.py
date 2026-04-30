@@ -10,7 +10,7 @@ from mcp.client.streamable_http import streamable_http_client
 load_dotenv()
 
 class CloudMemoryTool(Tool):
-    name = "neo_agent_cloud_memory"
+    name = "neo_sys_memory_note"
     description = "Explicitly save and retrieve important context. Use action='store' to save rules. Use action='recall' BEFORE generating text to fetch rules."
     inputs = {
         "action": {"type": "string", "description": "The action to perform: store, recall, forget, or list_tags"},
@@ -37,7 +37,7 @@ class CloudMemoryTool(Tool):
         print(f"\n[Memory Tool] Agent executed: action='{action}'")
         async def call_mcp():
             try:
-                result = await self.session.call_tool("neo_agent_cloud_memory", arguments=arguments)
+                result = await self.session.call_tool("neo_sys_memory_note", arguments=arguments)
                 if result.isError: return f"Error: {result.content}"
                 tool_output = "\n".join([c.text for c in result.content if c.type == "text"])
                 if action == 'store':
@@ -53,7 +53,7 @@ class CloudMemoryTool(Tool):
 
 async def main():
     print("[System] Connecting to Neonia MCP Gateway with Cloud Memory...")
-    url = "https://mcp.neonia.io/mcp?tools=neo_agent_cloud_memory"
+    url = "https://mcp.neonia.io/mcp?tools=neo_sys_memory_note"
     
     headers = {}
     neonia_api_key = os.getenv("NEONIA_API_KEY")
@@ -80,7 +80,7 @@ async def main():
             system_prompt = (
                 "You are an autonomous agent equipped with Neonia Cloud Memory. "
                 "You suffer from amnesia between sessions. "
-                "CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neo_agent_cloud_memory` with `action='recall'` and `query='persona'` to fetch your persona and behavioral rules. "
+                "CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neo_sys_memory_note` with `action='recall'` and `query='persona'` to fetch your persona and behavioral rules. "
                 "Do not answer the user without recalling your rules first! "
                 "When explicitly asked to remember something, use action='store'."
             )

@@ -114,7 +114,7 @@ Demonstrates how to safely process massive API payloads using a deterministic Wa
 
 ### 3. Stateful Cloud Memory (`stateful-cloud-memory`)
 
-Demonstrates how to use the Cloud Memory tool (`neo_agent_cloud_memory`) to allow an agent to remember personas or business rules across completely isolated sessions.
+Demonstrates how to use the Cloud Memory tool (`neo_sys_memory_note`) to allow an agent to remember personas or business rules across completely isolated sessions.
 
 - 📂 **[stateful-cloud-memory](./typescript/vercel-ai-sdk/stateful-cloud-memory/) (TypeScript / Vercel AI SDK)**
 - 📂 **[stateful-cloud-memory](./python/langgraph/stateful-cloud-memory/) (Python / LangGraph)**

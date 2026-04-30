@@ -1,0 +1,19 @@
+[package]
+name = "chained-json-jq-filter"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+dotenv = "0.15.0"
+futures = "0.3.32"
+reqwest = { version = "0.13", features = ["json", "cookies"] }
+reqwest-eventsource = "0.6.0"
+rig-core = { version = "0.36", features = ["rmcp"] }
+rmcp = { version = "1.5.0", features = ["client", "macros", "client-side-sse", "reqwest", "transport-streamable-http-client-reqwest"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1.0.149"
+thiserror = "2.0.18"
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+url = "2.5.8"

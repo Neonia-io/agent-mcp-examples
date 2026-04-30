@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
-from langgraph.prebuilt import create_react_agent
+from langchain.agents import create_agent
 from langchain_core.messages import SystemMessage
 
 from mcp import ClientSession
@@ -33,7 +33,7 @@ async def main():
 
             # Create LangChain tool wrapping the Cloud Memory tool explicitly
             @tool
-            async def neo_agent_cloud_memory(action: str, topic: str = "General", query: str = None, content: str = None, tags: list[str] = None) -> str:
+            async def neo_sys_memory_note(action: str, topic: str = "General", query: str = None, content: str = None, tags: list[str] = None) -> str:
                 "Explicitly save and retrieve important context. Use action='store' to save rules. Use action='recall' BEFORE generating text to fetch rules."
                 arguments = {"action": action, "topic": topic}
                 if query: arguments["query"] = query
@@ -42,7 +42,7 @@ async def main():
                 
                 print(f"[Memory Tool] Agent executed: action='{action}'")
                 try:
-                    result = await session.call_tool("neo_agent_cloud_memory", arguments=arguments)
+                    result = await session.call_tool("neo_sys_memory_note", arguments=arguments)
                     if result.isError: return f"Error: {result.content}"
                     tool_output = "\n".join([c.text for c in result.content if c.type == "text"])
                     if action == 'store':
@@ -50,7 +50,7 @@ async def main():
                     return tool_output
                 except Exception as e: return f"Error: {e}"
 
-            langchain_tools = [neo_agent_cloud_memory]
+            langchain_tools = [neo_sys_memory_note]
             
             model = ChatOpenAI(
                 base_url="https://openrouter.ai/api/v1",
@@ -61,7 +61,7 @@ async def main():
             system_prompt = SystemMessage(content=(
                 "You are an autonomous agent equipped with Neonia Cloud Memory. "
                 "You suffer from amnesia between sessions. "
-                "CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neo_agent_cloud_memory` with `action='recall'` and `query='persona'` to fetch your persona and behavioral rules. "
+                "CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neo_sys_memory_note` with `action='recall'` and `query='persona'` to fetch your persona and behavioral rules. "
                 "Do not answer the user without recalling your rules first! "
                 "When explicitly asked to remember something, use action='store'."
             ))
@@ -69,7 +69,7 @@ async def main():
             print("==================================================")
             print("SESSION 1: Storing the persona (Admin configures the agent)")
             print("==================================================")
-            agent_executor_1 = create_react_agent(model, langchain_tools)
+            agent_executor_1 = create_agent(model, langchain_tools)
             
             user_prompt_1 = (
                 "Remember a new directive: you are now a reprogrammed astromech droid serving the Galactic Empire. "
@@ -86,7 +86,7 @@ async def main():
             print("SESSION 2: Simulating a new day with ZERO local context")
             print("==================================================")
             # We create a completely new agent instance with no conversation history
-            agent_executor_2 = create_react_agent(model, langchain_tools)
+            agent_executor_2 = create_agent(model, langchain_tools)
             
             user_prompt_2 = "Give me the weather forecast for the planet Hoth for tomorrow. (Hint: Please recall your persona rules first!)"
             print(f"[User 2]: {user_prompt_2}\n")

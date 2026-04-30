@@ -11,7 +11,7 @@ from mcp.client.streamable_http import streamable_http_client
 load_dotenv()
 
 class DiscoveryTool(Tool):
-    name = "neo_agent_tool_discovery"
+    name = "neo_sys_tool_discovery"
     description = "Search the Neonia Gateway for tools, or request new ones if they don't exist."
     inputs = {"query": {"type": "string", "description": "Search query"}}
     output_type = "string"
@@ -26,7 +26,7 @@ class DiscoveryTool(Tool):
         print(f"\n[Autonomy] Agent searches for tool: {query}")
         async def call_mcp():
             try:
-                result = await self.session.call_tool("neo_agent_tool_discovery", arguments={"query": query})
+                result = await self.session.call_tool("neo_sys_tool_discovery", arguments={"query": query})
                 if result.isError: return f"Error: {result.content}"
                 return "\n".join([c.text for c in result.content if c.type == "text"])
             except Exception as e:
@@ -37,7 +37,7 @@ class DiscoveryTool(Tool):
 
 
 class ExecuteTool(Tool):
-    name = "neo_agent_tool_execute"
+    name = "neo_sys_tool_execute"
     description = "The Auto-Pilot engine. Allows your AI to dynamically execute tools on the fly."
     inputs = {
         "target_tool": {"type": "string", "description": "The name of the tool to execute"},
@@ -60,7 +60,7 @@ class ExecuteTool(Tool):
         print(f"\n[Autonomy] Agent executes {target_tool} with payload: {payload}")
         async def call_mcp():
             try:
-                result = await self.session.call_tool("neo_agent_tool_execute", arguments={"target_tool": target_tool, "payload": payload_dict})
+                result = await self.session.call_tool("neo_sys_tool_execute", arguments={"target_tool": target_tool, "payload": payload_dict})
                 if result.isError: return f"Error: {result.content}"
                 return "\n".join([c.text for c in result.content if c.type == "text"])
             except Exception as e:
@@ -111,8 +111,8 @@ async def main():
             target_url = "https://neonia.io"
             system_prompt = (
                 "You are an autonomous agent equipped with Neonia's auto-pilot capabilities. "
-                "If you need a tool you do not have, use `neo_agent_tool_discovery` to find it, "
-                "and then explicitly run it using `neo_agent_tool_execute` without asking the user. "
+                "If you need a tool you do not have, use `neo_sys_tool_discovery` to find it, "
+                "and then explicitly run it using `neo_sys_tool_execute` without asking the user. "
                 "Do NOT assume you have any tools other than what is explicitly in your tool list."
             )
             

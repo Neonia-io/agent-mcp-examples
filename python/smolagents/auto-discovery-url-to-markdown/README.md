@@ -14,8 +14,8 @@ Traditionally, AI agents are hard-coded with a static list of tools. If a user a
 
 Instead of pre-loading tools, this agent is equipped with only two meta-tools from the Neonia MCP Gateway:
 
-- `neo_agent_tool_discovery`: Searches the global Neonia registry for missing capabilities.
-- `neo_agent_tool_execute`: Dynamically executes the discovered tool using its required JSON payload.
+- `neo_sys_tool_discovery`: Searches the global Neonia registry for missing capabilities.
+- `neo_sys_tool_execute`: Dynamically executes the discovered tool using its required JSON payload.
 
 When asked to summarize the `neonia.io` webpage, the agent realizes it lacks a web scraping tool. It autonomously searches the Gateway, discovers the `neo_web_url_to_markdown` tool, and executes it perfectly without any human intervention or code changes.
 
@@ -27,7 +27,7 @@ When asked to summarize the `neonia.io` webpage, the agent realizes it lacks a w
 
 ## How It Works
 
-1. The agent connects to `mcp.neonia.io/mcp?tools=neo_agent_tool_discovery,neo_agent_tool_execute`.
+1. The agent connects to `mcp.neonia.io/mcp?tools=neo_sys_tool_discovery,neo_sys_tool_execute`.
 2. It subclasses `smolagents.Tool` to dynamically expose these MCP meta-tools to the agent.
 3. Hugging Face's `CodeAgent` evaluates the task and formulates a plan.
 4. When asked to fetch a URL, the agent searches for a tool, finds `neo_web_url_to_markdown`, and immediately executes it.

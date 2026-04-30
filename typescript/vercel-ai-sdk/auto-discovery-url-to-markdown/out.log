@@ -5,22 +5,22 @@
 ◇ injected env (2) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
 [System] Connecting to Neonia MCP Gateway with Auto-Pilot Tools...
 [System] Connected successfully to Neonia MCP.
-[System] Initial Agent tools cached: [neo_agent_cloud_memory, neo_agent_context_packer, neo_agent_tool_discovery, neo_agent_tool_execute, neo_data_jq_filter, neo_dev_mock_data_generator, neo_dev_version_checker, neo_vision_image_to_json, neo_web_url_to_markdown]
+[System] Initial Agent tools cached: [neo_sys_memory_note, neo_sys_context_packer, neo_sys_tool_discovery, neo_sys_tool_execute, neo_data_jq_filter, neo_dev_mock_data_generator, neo_dev_version_checker, neo_vision_image_to_json, neo_web_url_to_markdown]
 
 [System] Starting task...
 
 
 [Autonomy] Agent searches for tool: undefined
-[Autonomy] Tool step finished: neo_agent_tool_discovery
+[Autonomy] Tool step finished: neo_sys_tool_discovery
 
 [Autonomy] Agent searches for tool: fetch or extract content from a URL as markdown
-[Autonomy] Tool step finished: neo_agent_tool_discovery
+[Autonomy] Tool step finished: neo_sys_tool_discovery
 
 [Autonomy] Agent executes neo_web_url_to_markdown with payload: {"url":"https://neonia.io"}
-[Autonomy] Tool step finished: neo_agent_tool_execute
+[Autonomy] Tool step finished: neo_sys_tool_execute
 
 [Result]:
 Neonia serves as a universal MCP gateway and infrastructure provider that gives AI agents instant access to a marketplace of deterministic Wasm microservices. It features an "on-demand factory" for autonomous tool generation and an agent-native economy where users pay per invocation rather than through subscriptions.
 
 [System] Task complete. Checking cached tools...
-[System] Final Agent tools cached: [neo_agent_cloud_memory, neo_agent_context_packer, neo_agent_tool_discovery, neo_agent_tool_execute, neo_data_jq_filter, neo_dev_mock_data_generator, neo_dev_version_checker, neo_vision_image_to_json, neo_web_url_to_markdown]
+[System] Final Agent tools cached: [neo_sys_memory_note, neo_sys_context_packer, neo_sys_tool_discovery, neo_sys_tool_execute, neo_data_jq_filter, neo_dev_mock_data_generator, neo_dev_version_checker, neo_vision_image_to_json, neo_web_url_to_markdown]
