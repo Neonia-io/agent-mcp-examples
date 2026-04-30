@@ -12,12 +12,12 @@ async function main() {
     // 1. Setup MCP Client
     const neoniaApiKey = process.env.NEONIA_API_KEY;
     const headers = neoniaApiKey ? { "Authorization": `Bearer ${neoniaApiKey}` } : undefined;
-    
+
     // Connect with explicit ?tools= query string to avoid 404 from Gateway
-    const transport = new StreamableHTTPClientTransport(new URL("https://mcp.neonia.io/mcp?tools=neo_agent_tool_discovery,neo_agent_tool_execute"), {
+    const transport = new StreamableHTTPClientTransport(new URL("https://mcp.neonia.io/mcp?tools=neo_sys_tool_discovery,neo_sys_tool_execute"), {
         requestInit: headers ? { headers } : undefined
     });
-    
+
     const client = new Client({
         name: "mcp-auto-discovery-agent",
         version: "1.0.0"
@@ -33,7 +33,7 @@ async function main() {
     console.log(`[System] Initial Agent tools cached: [${toolsList.tools.map(t => t.name).join(", ")}]\n`);
 
     const tools = {
-        neo_agent_tool_discovery: aiTool({
+        neo_sys_tool_discovery: aiTool({
             description: "Search the Neonia Gateway for tools, or request new ones if they don't exist.",
             parameters: jsonSchema<{ query: string }>({
                 type: "object",
@@ -47,7 +47,7 @@ async function main() {
                 console.log(`\n[Autonomy] Agent searches for tool: ${query}`);
                 try {
                     const result = await client.callTool({
-                        name: "neo_agent_tool_discovery",
+                        name: "neo_sys_tool_discovery",
                         arguments: { query }
                     });
                     if (result.isError) return `Error: ${JSON.stringify(result.content)}`;
@@ -58,7 +58,7 @@ async function main() {
                 }
             }
         }),
-        neo_agent_tool_execute: aiTool({
+        neo_sys_tool_execute: aiTool({
             description: "CRITICAL: The Auto-Pilot engine. Allows your AI to dynamically execute tools on the fly. You MUST pass 'target_tool' as the tool name and 'payload' as the EXACT JSON arguments object.",
             parameters: jsonSchema<{ target_tool: string, payload: Record<string, unknown> }>({
                 type: "object",
@@ -73,7 +73,7 @@ async function main() {
                 console.log(`\n[Autonomy] Agent executes ${target_tool} with payload:`, JSON.stringify(payload));
                 try {
                     const result = await client.callTool({
-                        name: "neo_agent_tool_execute",
+                        name: "neo_sys_tool_execute",
                         arguments: { target_tool, payload }
                     });
                     if (result.isError) return `Error: ${JSON.stringify(result.content)}`;
@@ -90,24 +90,24 @@ async function main() {
 
     // 3. Run Agent
     const targetUrl = "https://neonia.io";
-    
+
     const openrouter = createOpenRouter({
         apiKey: process.env.OPENROUTER_API_KEY,
     });
-    
+
     const result = await generateText({
         model: openrouter('google/gemini-3-flash-preview'),
         tools: tools,
         stopWhen: stepCountIs(5),
         system: "You are an autonomous agent equipped with Neonia's auto-pilot capabilities. " +
-                "If you need a tool you do not have, use `neo_agent_tool_discovery` to find it. " +
-                "Once found, explicitly run it using `neo_agent_tool_execute` without asking the user. " +
-                "CRITICAL: When using neo_agent_tool_execute, you MUST use the exact parameter names 'target_tool' and 'payload'. " +
-                "Do NOT nest payloads, invent new field names, or use 'operation'/'parameters'.",
+            "If you need a tool you do not have, use `neo_sys_tool_discovery` to find it. " +
+            "Once found, explicitly run it using `neo_sys_tool_execute` without asking the user. " +
+            "CRITICAL: When using neo_sys_tool_execute, you MUST use the exact parameter names 'target_tool' and 'payload'. " +
+            "Do NOT nest payloads, invent new field names, or use 'operation'/'parameters'.",
         prompt: `Your goal is to test the discovery and execution of tools. ` +
-                `Please fetch the content of this URL as markdown: ${targetUrl}. ` +
-                `CRITICAL: Do NOT output the full markdown content. ` +
-                `Instead, after successfully fetching it using the discovered tool, provide a short, 2-3 sentence Overview of what the site is about.`,
+            `Please fetch the content of this URL as markdown: ${targetUrl}. ` +
+            `CRITICAL: Do NOT output the full markdown content. ` +
+            `Instead, after successfully fetching it using the discovered tool, provide a short, 2-3 sentence Overview of what the site is about.`,
         onStepFinish: (step) => {
             const toolCalls = step.toolCalls.map(t => t.toolName).join(", ");
             if (toolCalls) {

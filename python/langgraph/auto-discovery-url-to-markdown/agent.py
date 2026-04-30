@@ -17,7 +17,7 @@ load_dotenv()
 async def main():
     print("[System] Connecting to Neonia MCP Gateway with Auto-Pilot Tools...")
     
-    # neo_agent_tool_discovery and neo_agent_tool_execute are system tools that are available by default.
+    # neo_sys_tool_discovery and neo_sys_tool_execute are system tools that are available by default.
     # There is no need to explicitly request them in the URL.
     url = "https://mcp.neonia.io/mcp"
     
@@ -43,26 +43,26 @@ async def main():
             langchain_tools = []
             
             @tool
-            async def neo_agent_tool_discovery(query: str) -> str:
+            async def neo_sys_tool_discovery(query: str) -> str:
                 "Search the Neonia Gateway for tools, or request new ones if they don't exist."
                 print(f"[Autonomy] Agent searches for tool: {query}")
                 try:
-                    result = await session.call_tool("neo_agent_tool_discovery", arguments={"query": query})
+                    result = await session.call_tool("neo_sys_tool_discovery", arguments={"query": query})
                     if result.isError: return f"Error: {result.content}"
                     return "\n".join([c.text for c in result.content if c.type == "text"])
                 except Exception as e: return f"Error: {e}"
 
             @tool
-            async def neo_agent_tool_execute(target_tool: str, payload: dict) -> str:
+            async def neo_sys_tool_execute(target_tool: str, payload: dict) -> str:
                 "The Auto-Pilot engine. Allows your AI to dynamically execute tools on the fly."
                 print(f"[Autonomy] Agent executes {target_tool} with payload: {json.dumps(payload)}")
                 try:
-                    result = await session.call_tool("neo_agent_tool_execute", arguments={"target_tool": target_tool, "payload": payload})
+                    result = await session.call_tool("neo_sys_tool_execute", arguments={"target_tool": target_tool, "payload": payload})
                     if result.isError: return f"Error: {result.content}"
                     return "\n".join([c.text for c in result.content if c.type == "text"])
                 except Exception as e: return f"Error: {e}"
 
-            langchain_tools = [neo_agent_tool_discovery, neo_agent_tool_execute]
+            langchain_tools = [neo_sys_tool_discovery, neo_sys_tool_execute]
             
             print("[System] Starting task...\n")
 
@@ -79,8 +79,8 @@ async def main():
             
             system_prompt = SystemMessage(content=(
                 "You are an autonomous agent equipped with Neonia's auto-pilot capabilities. "
-                "If you need a tool you do not have, use `neo_agent_tool_discovery` to find it, "
-                "and then explicitly run it using `neo_agent_tool_execute` without asking the user. "
+                "If you need a tool you do not have, use `neo_sys_tool_discovery` to find it, "
+                "and then explicitly run it using `neo_sys_tool_execute` without asking the user. "
                 "Do NOT assume you have any tools other than what is explicitly in your tool list."
             ))
             user_prompt = (

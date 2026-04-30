@@ -10,7 +10,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     use rmcp::model::{ClientInfo, ClientCapabilities, Implementation};
     use rmcp::ServiceExt;
     
-    let url = "https://mcp.neonia.io/mcp?tools=neo_agent_tool_discovery,neo_agent_tool_execute";
+    let url = "https://mcp.neonia.io/mcp?tools=neo_sys_tool_discovery,neo_sys_tool_execute";
     let neonia_key = std::env::var("NEONIA_API_KEY").unwrap_or_default();
     let mut config = rmcp::transport::streamable_http_client::StreamableHttpClientTransportConfig::with_uri(url);
     config.auth_header = Some(format!("Bearer {}", neonia_key));

@@ -1,6 +1,6 @@
 # Stateful Cloud Memory Example (Rust / Rig)
 
-This example demonstrates how to use the **Neonia Cloud Memory** (`neo_agent_cloud_memory`) tool to create stateful agents that remember preferences, rules, or personas across entirely different sessions without needing complex RAG pipelines or databases.
+This example demonstrates how to use the **Neonia Cloud Memory** (`neo_sys_memory_note`) tool to create stateful agents that remember preferences, rules, or personas across entirely different sessions without needing complex RAG pipelines or databases.
 
 ## Scenario: The Imperial Droid 🌌
 
