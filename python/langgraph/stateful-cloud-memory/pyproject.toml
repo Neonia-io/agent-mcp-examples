@@ -1,7 +1,7 @@
 [project]
 name = "stateful-cloud-memory-langgraph"
 version = "0.1.0"
-description = "Stateful Cloud Memory Example (LangGraph)"
+description = "Stateful Memory Note Example (LangGraph)"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [

@@ -16,42 +16,42 @@ Agents are traditionally hard-coded with a static list of tools. If a user asks 
 
 Traditionally, when an agent needs to extract data from a large 5MB JSON file, it loads the entire file into its context window, causing massive token consumption, high latency, and LLM "amnesia". By connecting to the Neonia MCP Gateway (`mcp.neonia.io/mcp?tools=neo_data_jq_filter`), our `zero-bloat-jq-filter` agents explicitly bind the **Wasm-powered JQ Filter** tool. The agent executes queries on the remote server and receives only the filtered result (e.g. `$651,758.23`), saving **~50,000+ tokens** per request and responding almost instantly.
 
-#### 3. Stateful Cloud Memory (`stateful-cloud-memory`)
+#### 3. Stateful Memory Note (`stateful-cloud-memory`)
 
-Agents typically suffer from absolute amnesia between sessions. If a user states a preference or business rule, it is lost unless hardcoded into the system prompt. The `stateful-cloud-memory` examples demonstrate how to create stateful agents that use Neonia's Cloud Memory to dynamically store and recall rules (like custom personas or user preferences) across completely isolated sessions without needing a custom database.
+Agents typically suffer from absolute amnesia between sessions. If a user states a preference or business rule, it is lost unless hardcoded into the system prompt. The `stateful-cloud-memory` examples demonstrate how to create stateful agents that use Neonia's `neo_sys_memory_note` tool to dynamically store and recall rules (like custom personas or user preferences) across completely isolated sessions without needing a custom database.
 
 _(More examples covering vision extraction, dynamic execution, and multi-agent orchestration will be added soon!)_
 
 ## Examples Provided
 
-This repository includes implementations of "Zero-Bloat Data Processing", "Auto-Pilot Tool Discovery", and "Stateful Cloud Memory" across major agentic frameworks in 3 different languages:
+This repository includes implementations of "Zero-Bloat Data Processing", "Auto-Pilot Tool Discovery", and "Stateful Memory Note" across major agentic frameworks in 3 different languages:
 
 ### 1. Python (LangGraph)
 
 A deterministic workflow using **LangChain** and **LangGraph** to build a reactive agent (`create_agent`) that dynamically wraps MCP capabilities into native LangChain `@tool` instances.
 
-- **Directories**: `python/langgraph/zero-bloat-jq-filter`, `python/langgraph/auto-discovery-url-to-markdown`, `python/langgraph/stateful-cloud-memory`
+- **Directories**: `python/langgraph/zero-bloat-jq-filter`, `python/langgraph/chained-json-jq-filter`, `python/langgraph/auto-discovery-url-to-markdown`, `python/langgraph/stateful-cloud-memory`
 - **Setup**: `uv sync && uv run python agent.py`
 
 ### 2. Python (SmolAgents)
 
 A self-assembling agent using Hugging Face's **SmolAgents** and **LiteLLM**. Demonstrates subclassing `smolagents.Tool` for synchronous forward execution wrapped around an asynchronous Streamable HTTP session.
 
-- **Directories**: `python/smolagents/zero-bloat-jq-filter`, `python/smolagents/auto-discovery-url-to-markdown`
+- **Directories**: `python/smolagents/zero-bloat-jq-filter`, `python/smolagents/chained-json-jq-filter`, `python/smolagents/auto-discovery-url-to-markdown`
 - **Setup**: `uv sync && uv run python main.py`
 
 ### 3. TypeScript (Vercel AI SDK)
 
 An integration with the **Vercel AI SDK** utilizing the official `@modelcontextprotocol/sdk` and `@openrouter/ai-sdk-provider`. Demonstrates proper multi-turn tool calling and schema mapping for Claude 3.7 Sonnet.
 
-- **Directories**: `typescript/vercel-ai-sdk/zero-bloat-jq-filter`, `typescript/vercel-ai-sdk/auto-discovery-url-to-markdown`, `typescript/vercel-ai-sdk/stateful-cloud-memory`
+- **Directories**: `typescript/vercel-ai-sdk/zero-bloat-jq-filter`, `typescript/vercel-ai-sdk/chained-json-jq-filter`, `typescript/vercel-ai-sdk/auto-discovery-url-to-markdown`, `typescript/vercel-ai-sdk/stateful-cloud-memory`
 - **Setup**: `npm install && npm start`
 
 ### 4. Rust (Rig)
 
 A statically-typed integration using the **Rig** agent framework and `rust-mcp-sdk`. Demonstrates bridging an initialized MCP client session into Rust's strong type system.
 
-- **Directories**: `rust/rig/zero-bloat-jq-filter`, `rust/rig/auto-discovery-url-to-markdown`, `rust/rig/stateful-cloud-memory`
+- **Directories**: `rust/rig/zero-bloat-jq-filter`, `rust/rig/chained-json-jq-filter`, `rust/rig/auto-discovery-url-to-markdown`, `rust/rig/stateful-cloud-memory`
 - **Setup**: `cargo run`
 
 ## Prerequisites
@@ -69,23 +69,27 @@ Configure these in the `.env` file within the specific example directory you wis
 agent-mcp-examples/
 ├── typescript/                 # TypeScript Ecosystem
 │   └── vercel-ai-sdk/          # Vercel AI SDK Framework
-│       ├── zero-bloat-jq-filter/           # Agentic Data Processing
+│       ├── zero-bloat-jq-filter/           # Single-tool Data Processing
+│       ├── chained-json-jq-filter/         # Multi-tool Chained Data Processing
 │       ├── auto-discovery-url-to-markdown/ # Auto-Pilot Tool Discovery
-│       └── stateful-cloud-memory/          # Cloud Memory Persistence
+│       └── stateful-cloud-memory/          # System Memory Note Persistence
 │
 ├── python/                     # Python Ecosystem
 │   ├── langgraph/              # LangGraph Framework
 │   │   ├── zero-bloat-jq-filter/
+│   │   ├── chained-json-jq-filter/
 │   │   ├── auto-discovery-url-to-markdown/
 │   │   └── stateful-cloud-memory/
 │   └── smolagents/             # SmolAgents Framework
 │       ├── zero-bloat-jq-filter/
+│       ├── chained-json-jq-filter/
 │       ├── auto-discovery-url-to-markdown/
 │       └── stateful-cloud-memory/
 │
 └── rust/                       # Rust Ecosystem
     └── rig/                    # Rig Framework
         ├── zero-bloat-jq-filter/
+        ├── chained-json-jq-filter/
         ├── auto-discovery-url-to-markdown/
         └── stateful-cloud-memory/
 ```
@@ -112,9 +116,18 @@ Demonstrates how to safely process massive API payloads using a deterministic Wa
 - 📂 **[zero-bloat-jq-filter](./python/smolagents/zero-bloat-jq-filter/) (Python / SmolAgents)**
 - 📂 **[zero-bloat-jq-filter](./rust/rig/zero-bloat-jq-filter/) (Rust / Rig)**
 
-### 3. Stateful Cloud Memory (`stateful-cloud-memory`)
+### 3. Chained Data Execution (`chained-json-jq-filter`)
 
-Demonstrates how to use the Cloud Memory tool (`neo_sys_memory_note`) to allow an agent to remember personas or business rules across completely isolated sessions.
+Demonstrates how to safely process massive API payloads using a chained data workflow. The agent uses `neo_web_json_fetch` to retrieve remote JSON and stores it on the Gateway, returning a lightweight pointer. It then passes this pointer to a deterministic Wasm JQ filter (`neo_data_jq_filter`) to extract exactly what it needs, keeping its context window incredibly small.
+
+- 📂 **[chained-json-jq-filter](./typescript/vercel-ai-sdk/chained-json-jq-filter/) (TypeScript / Vercel AI SDK)**
+- 📂 **[chained-json-jq-filter](./python/langgraph/chained-json-jq-filter/) (Python / LangGraph)**
+- 📂 **[chained-json-jq-filter](./python/smolagents/chained-json-jq-filter/) (Python / SmolAgents)**
+- 📂 **[chained-json-jq-filter](./rust/rig/chained-json-jq-filter/) (Rust / Rig)**
+
+### 4. Stateful Memory Note (`stateful-cloud-memory`)
+
+Demonstrates how to use the System Memory Note tool (`neo_sys_memory_note`) to allow an agent to remember personas or business rules across completely isolated sessions.
 
 - 📂 **[stateful-cloud-memory](./typescript/vercel-ai-sdk/stateful-cloud-memory/) (TypeScript / Vercel AI SDK)**
 - 📂 **[stateful-cloud-memory](./python/langgraph/stateful-cloud-memory/) (Python / LangGraph)**

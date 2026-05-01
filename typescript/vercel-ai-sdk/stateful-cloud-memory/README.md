@@ -1,6 +1,6 @@
-# Stateful Cloud Memory Example (TypeScript / Vercel AI SDK)
+# Stateful Memory Note Example (TypeScript / Vercel AI SDK)
 
-This example demonstrates how to use the **Neonia Cloud Memory** (`neo_sys_memory_note`) tool to create stateful agents that remember preferences, rules, or personas across entirely different sessions without needing complex RAG pipelines or databases.
+This example demonstrates how to use the **Neonia System Memory Note** (`neo_sys_memory_note`) tool to create stateful agents that remember preferences, rules, or personas across entirely different sessions without needing complex RAG pipelines or databases.
 
 ## Scenario: The Imperial Droid 🌌
 To showcase the power of dynamic memory, this script runs two distinct simulated sessions:
