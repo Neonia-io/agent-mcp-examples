@@ -44,6 +44,7 @@ async function main() {
                 additionalProperties: false
             }),
             execute: async ({ query }: { query: string }) => {
+                if (!query) return "Error: 'query' parameter is required. Please provide a search query.";
                 console.log(`\n[Autonomy] Agent searches for tool: ${query}`);
                 try {
                     const result = await client.callTool({
@@ -70,6 +71,7 @@ async function main() {
                 additionalProperties: false
             }),
             execute: async ({ target_tool, payload }: { target_tool: string, payload: Record<string, unknown> }) => {
+                if (!target_tool || !payload) return "Error: 'target_tool' and 'payload' parameters are required.";
                 console.log(`\n[Autonomy] Agent executes ${target_tool} with payload:`, JSON.stringify(payload));
                 try {
                     const result = await client.callTool({
