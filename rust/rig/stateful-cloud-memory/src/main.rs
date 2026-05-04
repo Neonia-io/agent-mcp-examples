@@ -23,7 +23,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     println!("[System] Connecting to Neonia MCP Gateway with Cloud Memory...");
 
-    let url = "https://mcp.neonia.io/mcp?tools=neo_sys_memory_note";
+    let url = "https://mcp.neonia.io/mcp?tools=neo_sys_memory_note,neo_sys_memory_search";
     let neonia_key = env::var("NEONIA_API_KEY").unwrap_or_default();
     
     let mut config = rmcp::transport::streamable_http_client::StreamableHttpClientTransportConfig::with_uri(url);
@@ -49,9 +49,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let system_prompt = "You are an autonomous agent equipped with Neonia Cloud Memory. \
                          You suffer from amnesia between sessions. \
-                         CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neo_sys_memory_note` with `action='recall'` and `query='persona'` to fetch your persona and behavioral rules. \
-                         Do not answer the user without recalling your rules first! \
-                         When explicitly asked to remember something, use action='store'.";
+                         CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neo_sys_memory_search` to fetch your persona and behavioral rules. \
+                         Do not answer the user without searching your memory first! \
+                         When explicitly asked to remember something, use `neo_sys_memory_note`.";
 
     println!("==================================================");
     println!("SESSION 1: Storing the persona (Admin configures the agent)");
@@ -84,7 +84,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .rmcp_tools(initial_tools.clone(), client.peer().to_owned())
         .build();
 
-    let user_prompt_2 = "Give me the weather forecast for the planet Hoth for tomorrow. (Hint: Please recall your persona rules first!)";
+    let user_prompt_2 = "Give me the weather forecast for the planet Hoth for tomorrow. (Hint: Please search your memory for persona rules first!)";
     println!("[User 2]: {}\n", user_prompt_2);
 
     let response_2 = agent_2.prompt(user_prompt_2).await?;

@@ -17,7 +17,7 @@ load_dotenv()
 async def main():
     print("[System] Connecting to Neonia MCP Gateway with Cloud Memory...")
     
-    url = "https://mcp.neonia.io/mcp"
+    url = "https://mcp.neonia.io/mcp?tools=neo_sys_memory_note,neo_sys_memory_search"
     
     headers = {}
     neonia_api_key = os.getenv("NEONIA_API_KEY")
@@ -33,24 +33,32 @@ async def main():
 
             # Create LangChain tool wrapping the Cloud Memory tool explicitly
             @tool
-            async def neo_sys_memory_note(action: str, topic: str = "General", query: str = None, content: str = None, tags: list[str] = None) -> str:
-                "Explicitly save and retrieve important context. Use action='store' to save rules. Use action='recall' BEFORE generating text to fetch rules."
-                arguments = {"action": action, "topic": topic}
-                if query: arguments["query"] = query
-                if content: arguments["content"] = content
-                if tags: arguments["tags"] = tags
+            async def neo_sys_memory_note(fact: str, tags: list[str]) -> str:
+                "WRITE-ONLY: Store a simple, static fact, user preference, or system state into the global Swarm memory."
+                arguments = {"fact": fact, "tags": tags}
                 
-                print(f"[Memory Tool] Agent executed: action='{action}'")
+                print(f"[Memory Tool] Agent executed: neo_sys_memory_note")
                 try:
                     result = await session.call_tool("neo_sys_memory_note", arguments=arguments)
                     if result.isError: return f"Error: {result.content}"
                     tool_output = "\n".join([c.text for c in result.content if c.type == "text"])
-                    if action == 'store':
-                        return f"{tool_output}\nSUCCESS: Memory saved. You MUST now stop calling tools and reply to the user with 'Acknowledged'."
+                    return f"{tool_output}\nSUCCESS: Memory saved. You MUST now stop calling tools and reply to the user with 'Acknowledged'."
+                except Exception as e: return f"Error: {e}"
+
+            @tool
+            async def neo_sys_memory_search(query: str) -> str:
+                "READ-ONLY: Search the shared Swarm memory. Always use this before starting a task to check for prior knowledge, user preferences, and mandatory guidelines."
+                arguments = {"query": query}
+                
+                print(f"[Memory Tool] Agent executed: neo_sys_memory_search (query='{query}')")
+                try:
+                    result = await session.call_tool("neo_sys_memory_search", arguments=arguments)
+                    if result.isError: return f"Error: {result.content}"
+                    tool_output = "\n".join([c.text for c in result.content if c.type == "text"])
                     return tool_output
                 except Exception as e: return f"Error: {e}"
 
-            langchain_tools = [neo_sys_memory_note]
+            langchain_tools = [neo_sys_memory_note, neo_sys_memory_search]
             
             model = ChatOpenAI(
                 base_url="https://openrouter.ai/api/v1",
@@ -61,9 +69,9 @@ async def main():
             system_prompt = SystemMessage(content=(
                 "You are an autonomous agent equipped with Neonia Cloud Memory. "
                 "You suffer from amnesia between sessions. "
-                "CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neo_sys_memory_note` with `action='recall'` and `query='persona'` to fetch your persona and behavioral rules. "
-                "Do not answer the user without recalling your rules first! "
-                "When explicitly asked to remember something, use action='store'."
+                "CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neo_sys_memory_search` to fetch your persona and behavioral rules. "
+                "Do not answer the user without searching your memory first! "
+                "When explicitly asked to remember something, use `neo_sys_memory_note`."
             ))
             
             print("==================================================")
@@ -88,7 +96,7 @@ async def main():
             # We create a completely new agent instance with no conversation history
             agent_executor_2 = create_agent(model, langchain_tools)
             
-            user_prompt_2 = "Give me the weather forecast for the planet Hoth for tomorrow. (Hint: Please recall your persona rules first!)"
+            user_prompt_2 = "Give me the weather forecast for the planet Hoth for tomorrow. (Hint: Please search your memory for persona rules first!)"
             print(f"[User 2]: {user_prompt_2}\n")
             
             messages_2 = [system_prompt, {"role": "user", "content": user_prompt_2}]

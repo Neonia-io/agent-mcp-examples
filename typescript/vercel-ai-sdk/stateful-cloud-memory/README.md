@@ -1,11 +1,11 @@
 # Stateful Memory Note Example (TypeScript / Vercel AI SDK)
 
-This example demonstrates how to use the **Neonia System Memory Note** (`neo_sys_memory_note`) tool to create stateful agents that remember preferences, rules, or personas across entirely different sessions without needing complex RAG pipelines or databases.
+This example demonstrates how to use the **Neonia Dual Memory Architecture** (`neo_sys_memory_note` for writing and `neo_sys_memory_search` for reading) to create stateful agents that remember preferences, rules, or personas across entirely different sessions without needing complex RAG pipelines or databases.
 
 ## Scenario: The Imperial Droid 🌌
 To showcase the power of dynamic memory, this script runs two distinct simulated sessions:
-1. **Session 1 (Admin/Setup)**: The user commands the agent to adopt a new, strict persona (an Imperial Droid from Star Wars). The agent uses the `store` action of the Cloud Memory tool.
-2. **Session 2 (New Day)**: A completely fresh Vercel AI SDK agent instance is created with **zero** local conversation history. The user simply asks for the weather on Hoth. The agent autonomously uses the `recall` action, retrieves the persona rules, and responds accordingly.
+1. **Session 1 (Admin/Setup)**: The user commands the agent to adopt a new, strict persona (an Imperial Droid from Star Wars). The agent uses the `neo_sys_memory_note` tool to securely store this persona.
+2. **Session 2 (New Day)**: A completely fresh Vercel AI SDK agent instance is created with **zero** local conversation history. The user simply asks for the weather on Hoth. The agent autonomously uses the `neo_sys_memory_search` tool, retrieves the persona rules, and responds accordingly.
 
 ## Prerequisites
 

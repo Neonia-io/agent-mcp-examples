@@ -18,7 +18,7 @@ Traditionally, when an agent needs to extract data from a large 5MB JSON file, i
 
 #### 3. Stateful Memory Note (`stateful-cloud-memory`)
 
-Agents typically suffer from absolute amnesia between sessions. If a user states a preference or business rule, it is lost unless hardcoded into the system prompt. The `stateful-cloud-memory` examples demonstrate how to create stateful agents that use Neonia's `neo_sys_memory_note` tool to dynamically store and recall rules (like custom personas or user preferences) across completely isolated sessions without needing a custom database.
+Agents typically suffer from absolute amnesia between sessions. If a user states a preference or business rule, it is lost unless hardcoded into the system prompt. The `stateful-cloud-memory` examples demonstrate how to create stateful agents that use Neonia's Dual Memory Architecture (`neo_sys_memory_note` for writing and `neo_sys_memory_search` for reading) to dynamically store and recall rules (like custom personas or user preferences) across completely isolated sessions without needing a custom database.
 
 _(More examples covering vision extraction, dynamic execution, and multi-agent orchestration will be added soon!)_
 
@@ -127,7 +127,7 @@ Demonstrates how to safely process massive API payloads using a chained data wor
 
 ### 4. Stateful Memory Note (`stateful-cloud-memory`)
 
-Demonstrates how to use the System Memory Note tool (`neo_sys_memory_note`) to allow an agent to remember personas or business rules across completely isolated sessions.
+Demonstrates how to use the Dual Memory Architecture (`neo_sys_memory_note` and `neo_sys_memory_search`) to allow an agent to remember personas or business rules across completely isolated sessions.
 
 - 📂 **[stateful-cloud-memory](./typescript/vercel-ai-sdk/stateful-cloud-memory/) (TypeScript / Vercel AI SDK)**
 - 📂 **[stateful-cloud-memory](./python/langgraph/stateful-cloud-memory/) (Python / LangGraph)**
