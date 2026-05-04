@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+  <path d="
+    /* Main outline - clockwise */
+    M 200 300 
+    /* Balloon top curve */
+    A 300 100 0 0 1 800 300
+    /* Right side of balloon with tail fin connection */
+    L 800 250
+    L 900 300
+    L 800 350
+    /* Continue balloon bottom curve */
+    A 300 100 0 0 1 200 300
+    
+    /* Move to right strut and cut in */
+    M 620 400
+    /* Right strut */
+    L 620 500
+    /* Gondola top right */
+    L 650 500
+    /* Gondola bottom right */
+    L 650 620
+    /* Gondola bottom */
+    L 350 620
+    /* Gondola bottom left */
+    L 350 500
+    /* Gondola top left */
+    L 380 500
+    /* Left strut */
+    L 380 400
+    Z
+    
+    /* Left porthole - counter-clockwise */
+    M 420 560
+    A 20 20 0 0 0 380 560
+    A 20 20 0 0 0 420 560
+    Z
+    
+    /* Middle porthole - counter-clockwise */
+    M 520 560
+    A 20 20 0 0 0 480 560
+    A 20 20 0 0 0 520 560
+    Z
+    
+    /* Right porthole - counter-clockwise */
+    M 620 560
+    A 20 20 0 0 0 580 560
+    A 20 20 0 0 0 620 560
+    Z
+    
+    /* Left gear - counter-clockwise */
+    M 400 270
+    L 393 275
+    L 385 270
+    L 380 278
+    L 370 278
+    L 370 290
+    L 380 290
+    L 385 298
+    L 393 293
+    L 400 300
+    L 407 293
+    L 415 298
+    L 420 290
+    L 430 290
+    L 430 278
+    L 420 278
+    L 415 270
+    L 407 275
+    L 400 270
+    Z
+    
+    /* Right gear - counter-clockwise */
+    M 600 270
+    L 593 275
+    L 585 270
+    L 580 278
+    L 570 278
+    L 570 290
+    L 580 290
+    L 585 298
+    L 593 293
+    L 600 300
+    L 607 293
+    L 615 298
+    L 620 290
+    L 630 290
+    L 630 278
+    L 620 278
+    L 615 270
+    L 607 275
+    L 600 270
+    Z
+  " fill="none" stroke="black" stroke-width="1"/>
+</svg>
