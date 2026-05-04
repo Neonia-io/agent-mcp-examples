@@ -1,0 +1,13 @@
+[project]
+name = "stateful-cloud-memory-smolagents"
+version = "0.1.0"
+description = "Stateful Memory Note Example (SmolAgents)"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "smolagents>=1.0.0",
+    "litellm>=1.0.0",
+    "mcp>=1.3.0",
+    "httpx>=0.28.1",
+    "python-dotenv>=1.0.1",
+]

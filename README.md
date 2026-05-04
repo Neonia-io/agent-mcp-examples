@@ -20,6 +20,10 @@ Traditionally, when an agent needs to extract data from a large 5MB JSON file, i
 
 Agents typically suffer from absolute amnesia between sessions. If a user states a preference or business rule, it is lost unless hardcoded into the system prompt. The `stateful-cloud-memory` examples demonstrate how to create stateful agents that use Neonia's Dual Memory Architecture (`neo_sys_memory_note` for writing and `neo_sys_memory_search` for reading) to dynamically store and recall rules (like custom personas or user preferences) across completely isolated sessions without needing a custom database.
 
+#### 4. Persistent Knowledge Memory (`persistent-knowledge-memory`)
+
+When agents learn hard architectural lessons, bug fixes, or strict operational rules, they need a way to persist this knowledge using a strict Cause-and-Effect structure (ADR). The `persistent-knowledge-memory` examples demonstrate using the `neo_sys_memory_lesson` tool to save complex insights so future agents can fetch them using `neo_sys_memory_search` before starting their tasks.
+
 _(More examples covering vision extraction, dynamic execution, and multi-agent orchestration will be added soon!)_
 
 ## Examples Provided
@@ -30,28 +34,28 @@ This repository includes implementations of "Zero-Bloat Data Processing", "Auto-
 
 A deterministic workflow using **LangChain** and **LangGraph** to build a reactive agent (`create_agent`) that dynamically wraps MCP capabilities into native LangChain `@tool` instances.
 
-- **Directories**: `python/langgraph/zero-bloat-jq-filter`, `python/langgraph/chained-json-jq-filter`, `python/langgraph/auto-discovery-url-to-markdown`, `python/langgraph/stateful-cloud-memory`
+- **Directories**: `python/langgraph/zero-bloat-jq-filter`, `python/langgraph/chained-json-jq-filter`, `python/langgraph/auto-discovery-url-to-markdown`, `python/langgraph/stateful-cloud-memory`, `python/langgraph/persistent-knowledge-memory`
 - **Setup**: `uv sync && uv run python agent.py`
 
 ### 2. Python (SmolAgents)
 
 A self-assembling agent using Hugging Face's **SmolAgents** and **LiteLLM**. Demonstrates subclassing `smolagents.Tool` for synchronous forward execution wrapped around an asynchronous Streamable HTTP session.
 
-- **Directories**: `python/smolagents/zero-bloat-jq-filter`, `python/smolagents/chained-json-jq-filter`, `python/smolagents/auto-discovery-url-to-markdown`
+- **Directories**: `python/smolagents/zero-bloat-jq-filter`, `python/smolagents/chained-json-jq-filter`, `python/smolagents/auto-discovery-url-to-markdown`, `python/smolagents/stateful-cloud-memory`, `python/smolagents/persistent-knowledge-memory`
 - **Setup**: `uv sync && uv run python main.py`
 
 ### 3. TypeScript (Vercel AI SDK)
 
 An integration with the **Vercel AI SDK** utilizing the official `@modelcontextprotocol/sdk` and `@openrouter/ai-sdk-provider`. Demonstrates proper multi-turn tool calling and schema mapping for Claude 3.7 Sonnet.
 
-- **Directories**: `typescript/vercel-ai-sdk/zero-bloat-jq-filter`, `typescript/vercel-ai-sdk/chained-json-jq-filter`, `typescript/vercel-ai-sdk/auto-discovery-url-to-markdown`, `typescript/vercel-ai-sdk/stateful-cloud-memory`
+- **Directories**: `typescript/vercel-ai-sdk/zero-bloat-jq-filter`, `typescript/vercel-ai-sdk/chained-json-jq-filter`, `typescript/vercel-ai-sdk/auto-discovery-url-to-markdown`, `typescript/vercel-ai-sdk/stateful-cloud-memory`, `typescript/vercel-ai-sdk/persistent-knowledge-memory`
 - **Setup**: `npm install && npm start`
 
 ### 4. Rust (Rig)
 
 A statically-typed integration using the **Rig** agent framework and `rust-mcp-sdk`. Demonstrates bridging an initialized MCP client session into Rust's strong type system.
 
-- **Directories**: `rust/rig/zero-bloat-jq-filter`, `rust/rig/chained-json-jq-filter`, `rust/rig/auto-discovery-url-to-markdown`, `rust/rig/stateful-cloud-memory`
+- **Directories**: `rust/rig/zero-bloat-jq-filter`, `rust/rig/chained-json-jq-filter`, `rust/rig/auto-discovery-url-to-markdown`, `rust/rig/stateful-cloud-memory`, `rust/rig/persistent-knowledge-memory`
 - **Setup**: `cargo run`
 
 ## Prerequisites
@@ -72,26 +76,30 @@ agent-mcp-examples/
 │       ├── zero-bloat-jq-filter/           # Single-tool Data Processing
 │       ├── chained-json-jq-filter/         # Multi-tool Chained Data Processing
 │       ├── auto-discovery-url-to-markdown/ # Auto-Pilot Tool Discovery
-│       └── stateful-cloud-memory/          # System Memory Note Persistence
+│       ├── stateful-cloud-memory/          # System Memory Note Persistence
+│       └── persistent-knowledge-memory/    # Architectural Lesson Persistence
 │
 ├── python/                     # Python Ecosystem
 │   ├── langgraph/              # LangGraph Framework
 │   │   ├── zero-bloat-jq-filter/
 │   │   ├── chained-json-jq-filter/
 │   │   ├── auto-discovery-url-to-markdown/
-│   │   └── stateful-cloud-memory/
+│   │   ├── stateful-cloud-memory/
+│   │   └── persistent-knowledge-memory/
 │   └── smolagents/             # SmolAgents Framework
 │       ├── zero-bloat-jq-filter/
 │       ├── chained-json-jq-filter/
 │       ├── auto-discovery-url-to-markdown/
-│       └── stateful-cloud-memory/
+│       ├── stateful-cloud-memory/
+│       └── persistent-knowledge-memory/
 │
 └── rust/                       # Rust Ecosystem
     └── rig/                    # Rig Framework
         ├── zero-bloat-jq-filter/
         ├── chained-json-jq-filter/
         ├── auto-discovery-url-to-markdown/
-        └── stateful-cloud-memory/
+        ├── stateful-cloud-memory/
+        └── persistent-knowledge-memory/
 ```
 
 ## Available Examples
@@ -133,6 +141,15 @@ Demonstrates how to use the Dual Memory Architecture (`neo_sys_memory_note` and 
 - 📂 **[stateful-cloud-memory](./python/langgraph/stateful-cloud-memory/) (Python / LangGraph)**
 - 📂 **[stateful-cloud-memory](./python/smolagents/stateful-cloud-memory/) (Python / SmolAgents)**
 - 📂 **[stateful-cloud-memory](./rust/rig/stateful-cloud-memory/) (Rust / Rig)**
+
+### 5. Persistent Knowledge Memory (`persistent-knowledge-memory`)
+
+Demonstrates how to use the Dual Memory Architecture (`neo_sys_memory_lesson` and `neo_sys_memory_search`) to allow an agent to record hard architectural lessons in a cause-and-effect format and retrieve them dynamically on new tasks.
+
+- 📂 **[persistent-knowledge-memory](./typescript/vercel-ai-sdk/persistent-knowledge-memory/) (TypeScript / Vercel AI SDK)**
+- 📂 **[persistent-knowledge-memory](./python/langgraph/persistent-knowledge-memory/) (Python / LangGraph)**
+- 📂 **[persistent-knowledge-memory](./python/smolagents/persistent-knowledge-memory/) (Python / SmolAgents)**
+- 📂 **[persistent-knowledge-memory](./rust/rig/persistent-knowledge-memory/) (Rust / Rig)**
 
 ## Getting Started
 
