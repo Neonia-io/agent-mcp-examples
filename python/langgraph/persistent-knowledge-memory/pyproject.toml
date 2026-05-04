@@ -1,0 +1,14 @@
+[project]
+name = "stateful-cloud-memory-langgraph"
+version = "0.1.0"
+description = "Stateful Memory Note Example (LangGraph)"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "langchain-openai>=0.3.0",
+    "langgraph>=0.2.0",
+    "mcp>=1.3.0",
+    "httpx>=0.28.1",
+    "python-dotenv>=1.0.1",
+    "langchain>=1.2.17",
+]
