@@ -13,6 +13,7 @@ We believe agents should be engineers, not just conversational bots. To achieve 
 - `typescript/vercel-ai-sdk/zero-bloat-jq-filter`: Demonstrates using the Vercel AI SDK to build an agent that extracts data from remote JSONs using JQ, saving >50k tokens per run.
 - `typescript/vercel-ai-sdk/chained-json-jq-filter`: Demonstrates chaining tools by fetching a large JSON and querying the resulting resource pointer using JQ to avoid context bloat.
 - `typescript/vercel-ai-sdk/auto-discovery-url-to-markdown`: Example showing dynamic auto-discovery of tools and explicitly executing them using the Vercel AI SDK.
+- `typescript/vercel-ai-sdk/svg-manufacturing-loop`: Demonstrates a closed-loop generative-adversarial workflow for generating and validating physical SVGs using Neonia Pass-by-Reference architecture.
 - `typescript/vercel-ai-sdk/stateful-cloud-memory`: Demonstrates using Neonia Cloud Memory to create stateful agents that remember personas across isolated sessions.
 - `python/langgraph/zero-bloat-jq-filter`: Agentic workflow using LangGraph to dynamically map MCP tools to LangChain `@tool` instances for remote data filtering.
 - `python/langgraph/chained-json-jq-filter`: Demonstrates chaining tools by fetching a large JSON and querying the resulting resource pointer using JQ to avoid context bloat.

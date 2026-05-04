@@ -1,0 +1,13 @@
+[project]
+name = "svg-manufacturing-loop-langgraph"
+version = "0.1.0"
+description = "Closed-Loop Generative-Adversarial Workflow using Neonia Pass-by-Reference architecture with LangChain/LangGraph"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "httpx>=0.28.1",
+    "langchain>=0.3.14",
+    "langchain-openai>=0.3.0",
+    "mcp>=1.2.0",
+    "python-dotenv>=1.0.1",
+]

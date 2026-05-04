@@ -1,0 +1,13 @@
+[project]
+name = "svg-manufacturing-loop-smolagents"
+version = "0.1.0"
+description = "Closed-Loop Generative-Adversarial Workflow using Neonia Pass-by-Reference architecture with smolagents"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "httpx>=0.28.1",
+    "litellm>=1.59.8",
+    "mcp>=1.2.0",
+    "python-dotenv>=1.0.1",
+    "smolagents>=1.0.0",
+]
