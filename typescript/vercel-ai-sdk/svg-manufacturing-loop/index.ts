@@ -18,7 +18,7 @@ You NEVER handle raw SVG code. You only route tasks and URIs between your specia
 
 WORKFLOW RULES:
 1. GENERATE: Call \`neo_util_svg_generator\` with the user's prompt. 
-   - Set \`style_mode\` to "monochrome_outline".
+   - Set \`style_preset\` to "monochrome_outline".
    - Set \`stroke_width\` to 1.0.
    - The tool will return a JSON object containing \`svg_resource_uri\`.
 2. VALIDATE: You MUST instantly call \`neo_util_svg_validator\` in your NEXT action. Pass the URI string EXACTLY as received into the \`svg_resource_uri\` parameter. 
@@ -143,7 +143,6 @@ async function main() {
 
 
     let messages: CoreMessage[] = [
-        { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: TASK_PROMPT }
     ];
 
@@ -158,6 +157,7 @@ async function main() {
         const result = await generateText({
             model: openrouter(AI_MODEL),
             tools,
+            system: SYSTEM_PROMPT,
             messages,
         });
 
