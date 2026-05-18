@@ -12,7 +12,7 @@ async function main() {
     // 1. Setup MCP Client
     const neoniaApiKey = process.env.NEONIA_API_KEY;
     const headers = neoniaApiKey ? { "Authorization": `Bearer ${neoniaApiKey}` } : undefined;
-    const transport = new StreamableHTTPClientTransport(new URL("https://mcp.neonia.io/mcp?tools=neonia.web.json.fetch,neonia.data.jq.filter"), {
+    const transport = new StreamableHTTPClientTransport(new URL("https://mcp.neonia.io/mcp?tools=neonia_web_json_fetch,neonia_data_jq_filter"), {
         requestInit: headers ? { headers } : undefined
     });
     const client = new Client({
@@ -27,7 +27,7 @@ async function main() {
 
     // 2. Fetch and filter tools
     const toolsList = await client.listTools();
-    const allowedTools = ["neonia.web.json.fetch", "neonia.data.jq.filter"];
+    const allowedTools = ["neonia_web_json_fetch", "neonia_data_jq_filter"];
     const filteredMcpTools = toolsList.tools.filter(t => allowedTools.includes(t.name));
 
     const tools: Record<string, any> = {};
@@ -78,8 +78,8 @@ async function main() {
         stopWhen: stepCountIs(5),
         system: "You are an autonomous agent equipped with Neonia's data processing tools.\n" +
                 "## Usage Guidelines\n" +
-                "1. When asked to process JSON from a URL, ALWAYS use `neonia.web.json.fetch` first. It will securely store the file and return a `resource_uri` and a TypeScript schema of the data.\n" +
-                "2. Once you have the `resource_uri` and the schema, use `neonia.data.jq.filter` to extract exactly what you need. Pass the `resource_uri` to the `resource_uri` parameter, and formulate a mathematically precise `jq_query` based on the schema.\n" +
+                "1. When asked to process JSON from a URL, ALWAYS use `neonia_web_json_fetch` first. It will securely store the file and return a `resource_uri` and a TypeScript schema of the data.\n" +
+                "2. Once you have the `resource_uri` and the schema, use `neonia_data_jq_filter` to extract exactly what you need. Pass the `resource_uri` to the `resource_uri` parameter, and formulate a mathematically precise `jq_query` based on the schema.\n" +
                 "3. Write correct JQ queries. If the JSON has a wrapper object like `.posts`, use appropriate mapping. Example: `.posts[0:10] | map({title: .title, body: .body})`.\n" +
                 "4. Self-Correction: If a tool returns an error, evaluate your parameters, fix them, and try again.",
         prompt: `Fetch the JSON from ${targetUrl}, then use the jq filter to extract the title and body of the first 10 posts. Finally, provide a brief summary of the posts.`,
@@ -88,10 +88,10 @@ async function main() {
             if (toolCalls) {
                 console.log(`[Autonomy] Agent called tools: ${toolCalls}`);
             }
-            if (toolCalls.includes('neonia.web.json.fetch')) {
+            if (toolCalls.includes('neonia_web_json_fetch')) {
                 console.log(`[Autonomy] Fetched JSON successfully and received pointer!`);
             }
-            if (toolCalls.includes('neonia.data.jq.filter')) {
+            if (toolCalls.includes('neonia_data_jq_filter')) {
                 console.log(`[Autonomy] Filtered JSON successfully using JQ and pointer!`);
             }
         }

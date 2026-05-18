@@ -13,8 +13,8 @@ Traditionally, if an AI agent needs to find a specific value in a large JSON fil
 ## The Neonia Solution: Chained Data Execution
 
 Instead of reading the raw JSON file, this agent leverages the Neonia MCP Gateway to chain two tools together:
-1. `neonia.web.json.fetch` to fetch the large JSON from a remote URL. The Gateway stores the payload securely and returns a `resource_uri` pointer along with its TypeScript schema.
-2. `neonia.data.jq.filter` to run a Wasm-powered **JQ filter** on the remote server using the `resource_uri` and a generated jq query.
+1. `neonia_web_json_fetch` to fetch the large JSON from a remote URL. The Gateway stores the payload securely and returns a `resource_uri` pointer along with its TypeScript schema.
+2. `neonia_data_jq_filter` to run a Wasm-powered **JQ filter** on the remote server using the `resource_uri` and a generated jq query.
 
 The LLM never sees the massive JSON. It only sees the final, extracted result.
 
@@ -26,7 +26,7 @@ The LLM never sees the massive JSON. It only sees the final, extracted result.
 ## Architecture Notes
 
 Rig provides native integration with the Model Context Protocol through the `rmcp_tools` method. 
-The agent dynamically discovers the `neonia.web.json.fetch` and `neonia.data.jq.filter` tools from the gateway, allowing it to seamlessly construct the correct input payload for fetching the JSON and executing the JQ filter without loading any data locally.
+The agent dynamically discovers the `neonia_web_json_fetch` and `neonia_data_jq_filter` tools from the gateway, allowing it to seamlessly construct the correct input payload for fetching the JSON and executing the JQ filter without loading any data locally.
 
 ## Setup
 

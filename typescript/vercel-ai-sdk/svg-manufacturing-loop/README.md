@@ -16,8 +16,8 @@ This agent operates as a "Manufacturing Architect". It doesn't write SVG code it
 The architecture is known as **Token Arbitrage**: trading heavy text generation for lightweight API coordination, thus shifting the compute burden to specific, optimized tools and saving massive context space.
 
 ### The Loop:
-1. **Generate**: The orchestrator asks `neonia.util.svg.generator` to create an SVG. It receives back a URI (e.g. `neo://tmp/xwing.svg`). The LLM never sees the 500+ lines of SVG.
-2. **Validate**: The orchestrator instantly passes this URI to `neonia.util.svg.validator`, a strict geometric linter.
+1. **Generate**: The orchestrator asks `neonia_util_svg_generator` to create an SVG. It receives back a URI (e.g. `neo://tmp/xwing.svg`). The LLM never sees the 500+ lines of SVG.
+2. **Validate**: The orchestrator instantly passes this URI to `neonia_util_svg_validator`, a strict geometric linter.
 3. **Heal**: If errors are found, the orchestrator loops back. It passes the broken URI and the error coordinates back into the generator, dynamically switching to a heavier, math-focused model to heal the file.
 4. **Finalize**: Once validation passes, the agent presents the URI to the user, and our local script extracts it to an easily viewable `output-xwing.svg` file.
 

@@ -23,7 +23,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     println!("[System] Connecting to Neonia MCP Gateway with Cloud Memory...");
 
-    let url = "https://mcp.neonia.io/mcp?tools=neonia.sys.memory.note,neonia.sys.memory.search";
+    let url = "https://mcp.neonia.io/mcp?tools=neonia_sys_memory_note,neonia_sys_memory_search";
     let neonia_key = env::var("NEONIA_API_KEY").unwrap_or_default();
     
     let mut config = rmcp::transport::streamable_http_client::StreamableHttpClientTransportConfig::with_uri(url);
@@ -49,9 +49,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let system_prompt = "You are an autonomous agent equipped with Neonia Cloud Memory. \
                          You suffer from amnesia between sessions. \
-                         CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neonia.sys.memory.search` to fetch your persona and behavioral rules. \
+                         CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neonia_sys_memory_search` to fetch your persona and behavioral rules. \
                          Do not answer the user without searching your memory first! \
-                         When explicitly asked to remember something, use `neonia.sys.memory.note`.";
+                         When explicitly asked to remember something, use `neonia_sys_memory_note`.";
 
     println!("==================================================");
     println!("SESSION 1: Storing the persona (Admin configures the agent)");

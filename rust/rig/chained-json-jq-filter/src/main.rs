@@ -23,7 +23,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     println!("[System] Connecting to Neonia MCP Gateway via rmcp...");
 
-    let url = "https://mcp.neonia.io/mcp?tools=neonia.web.json.fetch,neonia.data.jq.filter";
+    let url = "https://mcp.neonia.io/mcp?tools=neonia_web_json_fetch,neonia_data_jq_filter";
     let neonia_key = env::var("NEONIA_API_KEY").unwrap_or_default();
     
     // Configure the rmcp transport
@@ -55,8 +55,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .preamble(
             "You are an autonomous agent equipped with Neonia's data processing tools.\n\
             ## Usage Guidelines\n\
-            1. When asked to process JSON from a URL, ALWAYS use `neonia.web.json.fetch` first. It will securely store the file and return a `resource_uri` and a TypeScript schema of the data.\n\
-            2. Once you have the `resource_uri` and the schema, use `neonia.data.jq.filter` to extract exactly what you need. Pass the `resource_uri` to the `resource_uri` parameter, and formulate a mathematically precise `jq_query` based on the schema.\n\
+            1. When asked to process JSON from a URL, ALWAYS use `neonia_web_json_fetch` first. It will securely store the file and return a `resource_uri` and a TypeScript schema of the data.\n\
+            2. Once you have the `resource_uri` and the schema, use `neonia_data_jq_filter` to extract exactly what you need. Pass the `resource_uri` to the `resource_uri` parameter, and formulate a mathematically precise `jq_query` based on the schema.\n\
             3. Write correct JQ queries. If the JSON has a wrapper object like `.posts`, use appropriate mapping. Example: `.posts[0:10] | map({title: .title, body: .body})`.\n\
             4. Self-Correction: If a tool returns an error, evaluate your parameters, fix them, and try again."
         )

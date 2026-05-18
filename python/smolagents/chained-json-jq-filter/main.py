@@ -73,7 +73,7 @@ class JQFilterTool(Tool):
 
 async def main():
     print("[System] Connecting to Neonia MCP Gateway...")
-    url = "https://mcp.neonia.io/mcp?tools=neonia.web.json.fetch,neonia.data.jq.filter"
+    url = "https://mcp.neonia.io/mcp?tools=neonia_web_json_fetch,neonia_data_jq_filter"
     
     headers = {}
     neonia_api_key = os.getenv("NEONIA_API_KEY")
@@ -86,16 +86,16 @@ async def main():
             print("[System] Connected successfully to Neonia MCP.")
 
             mcp_tools_response = await session.list_tools()
-            allowed_tools = ["neonia.web.json.fetch", "neonia.data.jq.filter"]
+            allowed_tools = ["neonia_web_json_fetch", "neonia_data_jq_filter"]
             filtered_mcp_tools = [t for t in mcp_tools_response.tools if t.name in allowed_tools]
             
             main_loop = asyncio.get_running_loop()
             
             smol_tools = []
             for mcp_tool in filtered_mcp_tools:
-                if mcp_tool.name == "neonia.web.json.fetch":
+                if mcp_tool.name == "neonia_web_json_fetch":
                     smol_tools.append(FetchTool(mcp_tool.name, mcp_tool.description, session, main_loop))
-                elif mcp_tool.name == "neonia.data.jq.filter":
+                elif mcp_tool.name == "neonia_data_jq_filter":
                     smol_tools.append(JQFilterTool(mcp_tool.name, mcp_tool.description, session, main_loop))
             
             print(f"[System] Agent equipped with {len(smol_tools)} foundational tools.")
@@ -116,8 +116,8 @@ async def main():
             system_prompt = (
                 "You are an autonomous agent equipped with Neonia's data processing tools.\n"
                 "## Usage Guidelines\n"
-                "1. When asked to process JSON from a URL, ALWAYS use `neonia.web.json.fetch` first. It will securely store the file and return a `resource_uri` and a TypeScript schema of the data.\n"
-                "2. Once you have the `resource_uri` and the schema, use `neonia.data.jq.filter` to extract exactly what you need. Pass the `resource_uri` to the `resource_uri` parameter, and formulate a mathematically precise `jq_query` based on the schema.\n"
+                "1. When asked to process JSON from a URL, ALWAYS use `neonia_web_json_fetch` first. It will securely store the file and return a `resource_uri` and a TypeScript schema of the data.\n"
+                "2. Once you have the `resource_uri` and the schema, use `neonia_data_jq_filter` to extract exactly what you need. Pass the `resource_uri` to the `resource_uri` parameter, and formulate a mathematically precise `jq_query` based on the schema.\n"
                 "3. Write correct JQ queries. If the JSON has a wrapper object like `.posts`, use appropriate mapping. Example: `.posts[0:10] | map({title: .title, body: .body})`.\n"
                 "4. Self-Correction: If a tool returns an error, evaluate your parameters, fix them, and try again."
             )

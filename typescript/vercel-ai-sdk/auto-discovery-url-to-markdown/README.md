@@ -14,10 +14,10 @@ Traditionally, AI agents are hard-coded with a static list of tools. If a user a
 
 Instead of pre-loading tools, this agent is equipped with only two meta-tools from the Neonia MCP Gateway:
 
-- `neonia.sys.tool.discovery`: Searches the global Neonia registry for missing capabilities.
-- `neonia.sys.tool.execute`: Dynamically executes the discovered tool using its required JSON payload.
+- `neonia_sys_tool_discovery`: Searches the global Neonia registry for missing capabilities.
+- `neonia_sys_tool_execute`: Dynamically executes the discovered tool using its required JSON payload.
 
-When asked to summarize the `neonia.io` webpage, the agent realizes it lacks a web scraping tool. It autonomously searches the Gateway, discovers the `neonia.web.url.to.markdown` tool, and executes it perfectly without any human intervention or code changes.
+When asked to summarize the `neonia.io` webpage, the agent realizes it lacks a web scraping tool. It autonomously searches the Gateway, discovers the `neonia_web_url_to_markdown` tool, and executes it perfectly without any human intervention or code changes.
 
 ### Impact
 
@@ -27,10 +27,10 @@ When asked to summarize the `neonia.io` webpage, the agent realizes it lacks a w
 
 ## How It Works
 
-1. The agent connects to `mcp.neonia.io/mcp?tools=neonia.sys.tool.discovery,neonia.sys.tool.execute`.
+1. The agent connects to `mcp.neonia.io/mcp?tools=neonia_sys_tool_discovery,neonia_sys_tool_execute`.
 2. It dynamically wraps these MCP meta-tools into Vercel AI SDK `tool` definitions using strict JSON schemas.
 3. The `generateText` function enters a multi-step loop, reasoning through the problem.
-4. When asked to fetch a URL, the agent searches for a tool, finds `neonia.web.url.to.markdown`, and immediately executes it.
+4. When asked to fetch a URL, the agent searches for a tool, finds `neonia_web_url_to_markdown`, and immediately executes it.
 
 ## Setup
 

@@ -13,7 +13,7 @@ Traditionally, if an AI agent needs to find a specific value in a large 5MB JSON
 ## The Neonia Solution: Remote JQ Execution
 
 Instead of reading the raw JSON file, this agent leverages the Neonia MCP Gateway.
-It explicitly connects and binds the `neonia.data.jq.filter` capability to run a Wasm-powered **JQ filter** on the remote server.
+It explicitly connects and binds the `neonia_data_jq_filter` capability to run a Wasm-powered **JQ filter** on the remote server.
 
 The LLM never sees the massive JSON. It only sees the final, extracted result (e.g., `$651,758.23`).
 
@@ -24,7 +24,7 @@ The LLM never sees the massive JSON. It only sees the final, extracted result (e
 
 ## How It Works
 
-1. The agent connects to `mcp.neonia.io/mcp?tools=neonia.data.jq.filter`.
+1. The agent connects to `mcp.neonia.io/mcp?tools=neonia_data_jq_filter`.
 2. It dynamically wraps the MCP tool into a LangChain `@tool` instance.
 3. LangGraph builds a reactive agent (`create_agent`) equipped with this tool.
 4. When asked to calculate the total carts value, the agent intelligently calls the remote tool instead of loading the massive JSON locally.

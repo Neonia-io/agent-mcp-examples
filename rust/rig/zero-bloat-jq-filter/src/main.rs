@@ -14,7 +14,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     println!("[System] Connecting to Neonia MCP Gateway via rmcp...");
 
-    let url = "https://mcp.neonia.io/mcp?tools=neonia.data.jq.filter";
+    let url = "https://mcp.neonia.io/mcp?tools=neonia_data_jq_filter";
     let neonia_key = env::var("NEONIA_API_KEY").unwrap_or_default();
     
     // Configure the rmcp transport
@@ -44,7 +44,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let agent = openrouter_client.agent("anthropic/claude-3.7-sonnet")
         .preamble(
-            "You are an autonomous agent equipped with the neonia.data.jq.filter tool.\n\
+            "You are an autonomous agent equipped with the neonia_data_jq_filter tool.\n\
             CRITICAL SYSTEM TOOL: This is a core data manipulation capability. ALWAYS use this to extract specific fields or filter arrays from large JSON files instead of trying to parse them entirely inside your context window or hallucinating data structures.\n\
             ## Usage Guidelines\n\
             1. Prefer data_url for large files: If you need to read JSON from a URL (e.g. an API endpoint), pass the URL to data_url and the tool will fetch and process it natively in its memory, completely bypassing your token limits.\n\

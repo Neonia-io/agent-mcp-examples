@@ -70,7 +70,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     println!("[System] Connecting to Neonia MCP Gateway with Auto-Pilot Tools...");
 
-    // neonia.sys.tool.discovery and neonia.sys.tool.execute are system tools that are available by default.
+    // neonia_sys_tool_discovery and neonia_sys_tool_execute are system tools that are available by default.
     // There is no need to explicitly request them in the URL.
     let url = "https://mcp.neonia.io/mcp";
     let neonia_key = env::var("NEONIA_API_KEY").unwrap_or_default();
@@ -103,8 +103,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let agent = openrouter_client.agent("google/gemini-3-flash-preview")
         .preamble(
             "You are an autonomous agent equipped with Neonia's auto-pilot capabilities. \
-            If you need a tool you do not have, use `neonia.sys.tool.discovery` to find it, \
-            and then explicitly run it using `neonia.sys.tool.execute` without asking the user. \
+            If you need a tool you do not have, use `neonia_sys_tool_discovery` to find it, \
+            and then explicitly run it using `neonia_sys_tool_execute` without asking the user. \
             Do NOT assume you have any tools other than what is explicitly in your tool list."
         )
         .default_max_turns(5)
