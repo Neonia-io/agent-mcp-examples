@@ -12,7 +12,7 @@ async function main() {
     // 1. Setup MCP Client
     const neoniaApiKey = process.env.NEONIA_API_KEY;
     const headers = neoniaApiKey ? { "Authorization": `Bearer ${neoniaApiKey}` } : undefined;
-    const transport = new StreamableHTTPClientTransport(new URL("https://mcp.neonia.io/mcp?tools=neo_data_jq_filter"), {
+    const transport = new StreamableHTTPClientTransport(new URL("https://mcp.neonia.io/mcp?tools=neonia.data.jq.filter"), {
         requestInit: headers ? { headers } : undefined
     });
     const client = new Client({
@@ -27,7 +27,7 @@ async function main() {
 
     // 2. Fetch and filter tools
     const toolsList = await client.listTools();
-    const allowedTools = ["neo_data_jq_filter"];
+    const allowedTools = ["neonia.data.jq.filter"];
     const filteredMcpTools = toolsList.tools.filter(t => allowedTools.includes(t.name));
 
     const tools: Record<string, any> = {};
@@ -76,7 +76,7 @@ async function main() {
         model: openrouter('anthropic/claude-3.7-sonnet'),
         tools: tools,
         stopWhen: stepCountIs(5),
-        system: "You are an autonomous agent equipped with the neo_data_jq_filter tool.\n" +
+        system: "You are an autonomous agent equipped with the neonia.data.jq.filter tool.\n" +
                 "CRITICAL SYSTEM TOOL: This is a core data manipulation capability. ALWAYS use this to extract specific fields or filter arrays from large JSON files instead of trying to parse them entirely inside your context window or hallucinating data structures.\n" +
                 "## Usage Guidelines\n" +
                 "1. Prefer data_url for large files: If you need to read JSON from a URL (e.g. an API endpoint), pass the URL to data_url and the tool will fetch and process it natively in its memory, completely bypassing your token limits.\n" +
@@ -89,7 +89,7 @@ async function main() {
             if (toolCalls) {
                 console.log(`[Autonomy] Agent called tools: ${toolCalls}`);
             }
-            if (toolCalls.includes('neo_data_jq_filter')) {
+            if (toolCalls.includes('neonia.data.jq.filter')) {
                 console.log(`[Autonomy] Saved ~50,000 tokens by using remote JQ filter!`);
             }
         }

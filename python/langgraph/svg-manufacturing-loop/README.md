@@ -1,7 +1,7 @@
 # SVG Manufacturing Loop (LangChain/LangGraph)
 
 This example demonstrates the Autonomous Manufacturing Loop using the Neonia Pass-by-Reference architecture.
-It uses two Wasm Component tools via the Neonia MCP Gateway: `neo_util_svg_generator` and `neo_util_svg_validator`.
+It uses two Wasm Component tools via the Neonia MCP Gateway: `neonia.util.svg.generator` and `neonia.util.svg.validator`.
 
 The autonomous agent is instructed to generate an SVG, strictly validate it for mathematical closure, and recursively self-heal if the validator finds any unclosed paths or self-intersections.
 

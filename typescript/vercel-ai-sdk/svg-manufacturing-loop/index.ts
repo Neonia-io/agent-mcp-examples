@@ -9,7 +9,7 @@ import * as path from 'path';
 dotenv.config();
 
 // Configuration
-const ALLOWED_TOOLS = ["neo_util_svg_generator", "neo_util_svg_validator"];
+const ALLOWED_TOOLS = ["neonia.util.svg.generator", "neonia.util.svg.validator"];
 const AI_MODEL = "google/gemini-3-flash-preview";
 
 // Prompts
@@ -17,15 +17,15 @@ const SYSTEM_PROMPT = `You are an Autonomous Manufacturing Architect. Your goal 
 You NEVER handle raw SVG code. You only route tasks and URIs between your specialized Wasm tools to save context tokens.
 
 WORKFLOW RULES:
-1. GENERATE: Call \`neo_util_svg_generator\` with the user's prompt. 
+1. GENERATE: Call \`neonia.util.svg.generator\` with the user's prompt. 
    - Set \`style_preset\` to "monochrome_outline".
    - Set \`stroke_width\` to 1.0.
    - The tool will return a JSON object containing \`svg_resource_uri\`.
-2. VALIDATE: You MUST instantly call \`neo_util_svg_validator\` in your NEXT action. Pass the URI string EXACTLY as received into the \`svg_resource_uri\` parameter. 
+2. VALIDATE: You MUST instantly call \`neonia.util.svg.validator\` in your NEXT action. Pass the URI string EXACTLY as received into the \`svg_resource_uri\` parameter. 
 CRITICAL AUTOMATION RULE: Do NOT stop after generating. You must execute the validation tool call autonomously. Never present a final text answer until the validator returns \`is_valid: true\`.
 3. EVALUATE & HEAL (The Loop): 
    - If \`is_valid\` is true: You are done. Present the final URI to the user.
-   - If \`is_valid\` is false: Call \`neo_util_svg_generator\` AGAIN. 
+   - If \`is_valid\` is false: Call \`neonia.util.svg.generator\` AGAIN. 
    - Pass the broken URI and the exact errors array into the \`validation_feedback\` object. 
    - Ensure \`stroke_width\` is set to 1.0.
 4. Repeat steps 2 and 3 until the validator returns \`is_valid: true\`.`;
@@ -58,7 +58,7 @@ async function main() {
     const headers = neoniaApiKey ? { "Authorization": `Bearer ${neoniaApiKey}` } : undefined;
 
     // Connect to Neonia Gateway
-    const transport = new StreamableHTTPClientTransport(new URL("https://mcp.neonia.io/mcp?tools=neo_util_svg_generator,neo_util_svg_validator"), {
+    const transport = new StreamableHTTPClientTransport(new URL("https://mcp.neonia.io/mcp?tools=neonia.util.svg.generator,neonia.util.svg.validator"), {
         requestInit: headers ? { headers } : undefined
     });
 
@@ -106,7 +106,7 @@ async function main() {
                     console.log(`[Result] from ${mcpTool.name}: `, responseText);
 
                     // Track the generated SVG URI
-                    if (mcpTool.name === 'neo_util_svg_generator') {
+                    if (mcpTool.name === 'neonia.util.svg.generator') {
                         try {
                             const parsed = JSON.parse(responseText);
                             if (parsed.svg_resource_uri) {
@@ -117,7 +117,7 @@ async function main() {
                         }
 
                         // Force the LLM to validate by appending a directive to the tool's output
-                        responseText += `\n\n[SYSTEM DIRECTIVE]: SVG generated successfully. You MUST now execute the 'neo_util_svg_validator' tool using svg_resource_uri="${latestSvgUri}" to geometrically validate it. DO NOT answer the user or end the task until validation passes.`;
+                        responseText += `\n\n[SYSTEM DIRECTIVE]: SVG generated successfully. You MUST now execute the 'neonia.util.svg.validator' tool using svg_resource_uri="${latestSvgUri}" to geometrically validate it. DO NOT answer the user or end the task until validation passes.`;
                     }
 
                     return responseText;
@@ -173,7 +173,7 @@ async function main() {
         }
 
         // Check if validator was called and what it returned
-        const valResult = result.toolResults.find(tr => tr.toolName === 'neo_util_svg_validator');
+        const valResult = result.toolResults.find(tr => tr.toolName === 'neonia.util.svg.validator');
         if (valResult) {
             try {
                 const parsed = JSON.parse(valResult.result as string);
@@ -190,7 +190,7 @@ async function main() {
             console.log(`[Warning] Agent stopped without validating. Forcing continuation...`);
             messages.push({
                 role: 'user',
-                content: `You stopped without achieving a successful validation (is_valid: true). If you generated an SVG, you MUST now use the neo_util_svg_validator tool. If it failed, you MUST generate a new SVG.`
+                content: `You stopped without achieving a successful validation (is_valid: true). If you generated an SVG, you MUST now use the neonia.util.svg.validator tool. If it failed, you MUST generate a new SVG.`
             });
         }
     }

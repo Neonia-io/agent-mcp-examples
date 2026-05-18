@@ -17,7 +17,7 @@ load_dotenv()
 async def main():
     print("[System] Connecting to Neonia MCP Gateway with Cloud Memory...")
     
-    url = "https://mcp.neonia.io/mcp?tools=neo_sys_memory_lesson,neo_sys_memory_search"
+    url = "https://mcp.neonia.io/mcp?tools=neonia.sys.memory.lesson,neonia.sys.memory.search"
     
     headers = {}
     neonia_api_key = os.getenv("NEONIA_API_KEY")
@@ -33,32 +33,32 @@ async def main():
 
             # Create LangChain tool wrapping the Cloud Memory tool explicitly
             @tool
-            async def neo_sys_memory_lesson(observation: str, root_cause: str, decision_rule: str, tags: list[str]) -> str:
+            async def neonia.sys.memory.lesson(observation: str, root_cause: str, decision_rule: str, tags: list[str]) -> str:
                 "WRITE-ONLY: Store a hard-learned lesson, bug fix, or mandatory rule for future reference."
                 arguments = {"observation": observation, "root_cause": root_cause, "decision_rule": decision_rule, "tags": tags}
                 
-                print(f"[Memory Tool] Agent executed: neo_sys_memory_lesson")
+                print(f"[Memory Tool] Agent executed: neonia.sys.memory.lesson")
                 try:
-                    result = await session.call_tool("neo_sys_memory_lesson", arguments=arguments)
+                    result = await session.call_tool("neonia.sys.memory.lesson", arguments=arguments)
                     if result.isError: return f"Error: {result.content}"
                     tool_output = "\n".join([c.text for c in result.content if c.type == "text"])
                     return f"{tool_output}\nSUCCESS: Memory saved. You MUST now stop calling tools and reply to the user with 'Acknowledged'."
                 except Exception as e: return f"Error: {e}"
 
             @tool
-            async def neo_sys_memory_search(query: str) -> str:
+            async def neonia.sys.memory.search(query: str) -> str:
                 "READ-ONLY: Search the shared Swarm memory. Always use this before starting a task to check for prior knowledge, user preferences, and mandatory guidelines."
                 arguments = {"query": query}
                 
-                print(f"[Memory Tool] Agent executed: neo_sys_memory_search (query='{query}')")
+                print(f"[Memory Tool] Agent executed: neonia.sys.memory.search (query='{query}')")
                 try:
-                    result = await session.call_tool("neo_sys_memory_search", arguments=arguments)
+                    result = await session.call_tool("neonia.sys.memory.search", arguments=arguments)
                     if result.isError: return f"Error: {result.content}"
                     tool_output = "\n".join([c.text for c in result.content if c.type == "text"])
                     return tool_output
                 except Exception as e: return f"Error: {e}"
 
-            langchain_tools = [neo_sys_memory_lesson, neo_sys_memory_search]
+            langchain_tools = [neonia.sys.memory.lesson, neonia.sys.memory.search]
             
             model = ChatOpenAI(
                 base_url="https://openrouter.ai/api/v1",
@@ -69,9 +69,9 @@ async def main():
             system_prompt = SystemMessage(content=(
                 "You are an autonomous agent equipped with Neonia Cloud Memory. "
                 "You suffer from amnesia between sessions. "
-                "CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neo_sys_memory_search` to fetch your architectural rules and lessons. "
+                "CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neonia.sys.memory.search` to fetch your architectural rules and lessons. "
                 "Do not answer the user without searching your memory first! "
-                "When explicitly asked to remember an architectural lesson, use `neo_sys_memory_lesson`."
+                "When explicitly asked to remember an architectural lesson, use `neonia.sys.memory.lesson`."
             ))
             
             print("==================================================")

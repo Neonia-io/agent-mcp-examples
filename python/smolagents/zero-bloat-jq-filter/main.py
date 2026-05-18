@@ -47,7 +47,7 @@ class MCPToolWrapper(Tool):
 
 async def main():
     print("[System] Connecting to Neonia MCP Gateway...")
-    url = "https://mcp.neonia.io/mcp?tools=neo_data_jq_filter"
+    url = "https://mcp.neonia.io/mcp?tools=neonia.data.jq.filter"
     
     headers = {}
     neonia_api_key = os.getenv("NEONIA_API_KEY")
@@ -60,7 +60,7 @@ async def main():
             print("[System] Connected successfully to Neonia MCP.")
 
             mcp_tools_response = await session.list_tools()
-            allowed_tools = ["neo_data_jq_filter"]
+            allowed_tools = ["neonia.data.jq.filter"]
             filtered_mcp_tools = [t for t in mcp_tools_response.tools if t.name in allowed_tools]
             
             main_loop = asyncio.get_running_loop()
@@ -85,7 +85,7 @@ async def main():
 
             target_url = "https://dummyjson.com/carts"
             system_prompt = (
-                "You are an autonomous agent equipped with the neo_data_jq_filter tool.\n"
+                "You are an autonomous agent equipped with the neonia.data.jq.filter tool.\n"
                 "CRITICAL SYSTEM TOOL: This is a core data manipulation capability. ALWAYS use this to extract specific fields or filter arrays from large JSON files instead of trying to parse them entirely inside your context window or hallucinating data structures.\n"
                 "## Usage Guidelines\n"
                 "1. Prefer data_url for large files: If you need to read JSON from a URL (e.g. an API endpoint), pass the URL to data_url and the tool will fetch and process it natively in its memory, completely bypassing your token limits.\n"

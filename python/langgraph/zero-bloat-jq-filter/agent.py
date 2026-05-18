@@ -16,7 +16,7 @@ load_dotenv()
 
 async def main():
     print("[System] Connecting to Neonia MCP Gateway...")
-    url = "https://mcp.neonia.io/mcp?tools=neo_data_jq_filter"
+    url = "https://mcp.neonia.io/mcp?tools=neonia.data.jq.filter"
     
     # 1. Setup MCP Client via SSE
     headers = {}
@@ -31,7 +31,7 @@ async def main():
 
             # 2. Fetch available tools from the MCP server
             mcp_tools_response = await session.list_tools()
-            allowed_tools = ["neo_data_jq_filter"]
+            allowed_tools = ["neonia.data.jq.filter"]
             filtered_mcp_tools = [t for t in mcp_tools_response.tools if t.name in allowed_tools]
             
             # 3. Create LangChain tools wrapping MCP tool execution
@@ -76,7 +76,7 @@ async def main():
             target_url = "https://dummyjson.com/carts"
             
             system_prompt = SystemMessage(content=(
-                "You are an autonomous agent equipped with the neo_data_jq_filter tool.\n"
+                "You are an autonomous agent equipped with the neonia.data.jq.filter tool.\n"
                 "CRITICAL SYSTEM TOOL: This is a core data manipulation capability. ALWAYS use this to extract specific fields or filter arrays from large JSON files instead of trying to parse them entirely inside your context window or hallucinating data structures.\n"
                 "## Usage Guidelines\n"
                 "1. Prefer data_url for large files: If you need to read JSON from a URL (e.g. an API endpoint), pass the URL to data_url and the tool will fetch and process it natively in its memory, completely bypassing your token limits.\n"
@@ -93,7 +93,7 @@ async def main():
                 if kind == "on_tool_start":
                     print(f"[Autonomy] Agent called tool: {event['name']}")
                 elif kind == "on_tool_end":
-                    if event["name"] == "neo_data_jq_filter":
+                    if event["name"] == "neonia.data.jq.filter":
                         print("[Autonomy] Saved ~50,000 tokens by using remote JQ filter!")
 
             final_state = await agent_executor.ainvoke({"messages": messages})

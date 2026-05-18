@@ -14,7 +14,7 @@ async function main() {
     const headers = neoniaApiKey ? { "Authorization": `Bearer ${neoniaApiKey}` } : undefined;
 
     // Connect to Neonia Gateway
-    const transport = new StreamableHTTPClientTransport(new URL("https://mcp.neonia.io/mcp?tools=neo_sys_memory_lesson,neo_sys_memory_search"), {
+    const transport = new StreamableHTTPClientTransport(new URL("https://mcp.neonia.io/mcp?tools=neonia.sys.memory.lesson,neonia.sys.memory.search"), {
         requestInit: headers ? { headers } : undefined
     });
 
@@ -30,7 +30,7 @@ async function main() {
 
     // Create Vercel AI SDK tools that explicitly wrap Cloud Memory
     const tools = {
-        neo_sys_memory_lesson: aiTool({
+        neonia.sys.memory.lesson: aiTool({
             description: "WRITE-ONLY: Store a hard-learned lesson, bug fix, or mandatory rule for future reference.",
             parameters: z.object({
                 observation: z.string().describe("OBSERVATION: What happened? The symptom or context"),
@@ -39,10 +39,10 @@ async function main() {
                 tags: z.array(z.string()).describe("2-3 keywords for semantic retrieval")
             }),
             execute: async (args) => {
-                console.log(`[Memory Tool] Agent executed: neo_sys_memory_lesson`);
+                console.log(`[Memory Tool] Agent executed: neonia.sys.memory.lesson`);
                 try {
                     const result = await client.callTool({
-                        name: "neo_sys_memory_lesson",
+                        name: "neonia.sys.memory.lesson",
                         arguments: args as any
                     });
                     if (result.isError) return `Error: ${JSON.stringify(result.content)}`;
@@ -56,16 +56,16 @@ async function main() {
                 }
             }
         }),
-        neo_sys_memory_search: aiTool({
+        neonia.sys.memory.search: aiTool({
             description: "READ-ONLY: Search the shared Swarm memory. Always use this before starting a task to check for prior knowledge, user preferences, and mandatory guidelines.",
             parameters: z.object({
                 query: z.string().describe("Semantic search query or keywords to look for.")
             }),
             execute: async (args) => {
-                console.log(`[Memory Tool] Agent executed: neo_sys_memory_search (query='${args.query}')`);
+                console.log(`[Memory Tool] Agent executed: neonia.sys.memory.search (query='${args.query}')`);
                 try {
                     const result = await client.callTool({
-                        name: "neo_sys_memory_search",
+                        name: "neonia.sys.memory.search",
                         arguments: args as any
                     });
                     if (result.isError) return `Error: ${JSON.stringify(result.content)}`;
@@ -85,9 +85,9 @@ async function main() {
 
     const systemPrompt = "You are an autonomous agent equipped with Neonia Cloud Memory. \
 You suffer from amnesia between sessions. \
-CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neo_sys_memory_search` to fetch your architectural rules and lessons. \
+CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neonia.sys.memory.search` to fetch your architectural rules and lessons. \
 Do not answer the user without searching your memory first! \
-When explicitly asked to remember an architectural lesson, use `neo_sys_memory_lesson`. \
+When explicitly asked to remember an architectural lesson, use `neonia.sys.memory.lesson`. \
 IMPORTANT: Once you execute the memory lesson tool successfully, IMMEDIATELY reply to the user with the final text and do NOT call any more tools.";
 
     console.log("==================================================");

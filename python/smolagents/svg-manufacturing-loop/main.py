@@ -14,15 +14,15 @@ SYSTEM_PROMPT = """You are an Autonomous Manufacturing Architect. Your goal is t
 You NEVER handle raw SVG code. You only route tasks and URIs between your specialized Wasm tools to save context tokens.
 
 WORKFLOW RULES:
-1. GENERATE: Call `neo_util_svg_generator` with the user's prompt. 
+1. GENERATE: Call `neonia.util.svg.generator` with the user's prompt. 
    - Set `style_mode` to "monochrome_outline".
    - Set `stroke_width` to 1.0.
    - The tool will return a JSON object containing `svg_resource_uri`.
-2. VALIDATE: You MUST instantly call `neo_util_svg_validator` in your NEXT action. Pass the URI string EXACTLY as received into the `svg_resource_uri` parameter. 
+2. VALIDATE: You MUST instantly call `neonia.util.svg.validator` in your NEXT action. Pass the URI string EXACTLY as received into the `svg_resource_uri` parameter. 
 CRITICAL AUTOMATION RULE: Do NOT stop after generating. You must execute the validation tool call autonomously. Never present a final text answer until the validator returns `is_valid: true`.
 3. EVALUATE & HEAL (The Loop): 
    - If `is_valid` is true: You are done. Present the final URI to the user.
-   - If `is_valid` is false: Call `neo_util_svg_generator` AGAIN. 
+   - If `is_valid` is false: Call `neonia.util.svg.generator` AGAIN. 
    - Pass the broken URI and the exact errors array into the `validation_feedback` object. 
    - Ensure `stroke_width` is set to 1.0.
 4. Repeat steps 2 and 3 until the validator returns `is_valid: true`.
@@ -51,7 +51,7 @@ Output ONLY the raw <svg> code. Make the design look intricate, industrial, and 
 latest_svg_uri = None
 
 class SvgGeneratorTool(Tool):
-    name = "neo_util_svg_generator"
+    name = "neonia.util.svg.generator"
     description = "Generates SVG files from natural language descriptions. Returns a JSON with svg_resource_uri."
     inputs = {
         "prompt": {"type": "string", "description": "Detailed description of what to draw."},
@@ -76,15 +76,15 @@ class SvgGeneratorTool(Tool):
         if validation_feedback:
             arguments["validation_feedback"] = validation_feedback
         
-        print(f"\n[Autonomy] Agent calls neo_util_svg_generator with args:\n{json.dumps(arguments, indent=2)}")
+        print(f"\n[Autonomy] Agent calls neonia.util.svg.generator with args:\n{json.dumps(arguments, indent=2)}")
         
         async def call_mcp():
             global latest_svg_uri
             try:
-                result = await self.session.call_tool("neo_util_svg_generator", arguments=arguments)
+                result = await self.session.call_tool("neonia.util.svg.generator", arguments=arguments)
                 if result.isError: return f"Error: {result.content}"
                 tool_output = "\n".join([c.text for c in result.content if c.type == "text"])
-                print(f"[Result] from neo_util_svg_generator: {tool_output}")
+                print(f"[Result] from neonia.util.svg.generator: {tool_output}")
                 try:
                     parsed = json.loads(tool_output)
                     if "svg_resource_uri" in parsed:
@@ -101,7 +101,7 @@ class SvgGeneratorTool(Tool):
 
 
 class SvgValidatorTool(Tool):
-    name = "neo_util_svg_validator"
+    name = "neonia.util.svg.validator"
     description = "A strict geometric linter for SVG code. Mathematically detects unclosed paths, self-intersections."
     inputs = {
         "svg_content": {"type": "string", "description": "The raw SVG string (XML) to validate", "nullable": True},
@@ -120,7 +120,7 @@ class SvgValidatorTool(Tool):
         self.is_initialized = True
 
     def forward(self, svg_resource_uri: str = None, svg_content: str = None, check_closed_paths: bool = True, check_intersections: bool = True, check_continuity: bool = True, min_segment_length: float = 0.1) -> str:
-        print(f"\n[Autonomy] Agent calls neo_util_svg_validator with URI: {svg_resource_uri or svg_content}")
+        print(f"\n[Autonomy] Agent calls neonia.util.svg.validator with URI: {svg_resource_uri or svg_content}")
         
         async def call_mcp():
             arguments = {
@@ -135,10 +135,10 @@ class SvgValidatorTool(Tool):
                 arguments["svg_content"] = svg_content
             
             try:
-                result = await self.session.call_tool("neo_util_svg_validator", arguments=arguments)
+                result = await self.session.call_tool("neonia.util.svg.validator", arguments=arguments)
                 if result.isError: return f"Error: {result.content}"
                 tool_output = "\n".join([c.text for c in result.content if c.type == "text"])
-                print(f"[Result] from neo_util_svg_validator: {tool_output}")
+                print(f"[Result] from neonia.util.svg.validator: {tool_output}")
                 return tool_output
             except Exception as e:
                 return f"Error: {e}"
@@ -150,7 +150,7 @@ class SvgValidatorTool(Tool):
 
 async def main():
     print("[System] Connecting to Neonia MCP Gateway...")
-    url = "https://mcp.neonia.io/mcp?tools=neo_util_svg_generator,neo_util_svg_validator"
+    url = "https://mcp.neonia.io/mcp?tools=neonia.util.svg.generator,neonia.util.svg.validator"
     
     headers = {}
     neonia_api_key = os.getenv("NEONIA_API_KEY")

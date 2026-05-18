@@ -16,7 +16,7 @@ load_dotenv()
 
 async def main():
     print("[System] Connecting to Neonia MCP Gateway...")
-    url = "https://mcp.neonia.io/mcp?tools=neo_web_json_fetch,neo_data_jq_filter"
+    url = "https://mcp.neonia.io/mcp?tools=neonia.web.json.fetch,neonia.data.jq.filter"
     
     # 1. Setup MCP Client via SSE
     headers = {}
@@ -31,16 +31,16 @@ async def main():
 
             # 2. Fetch available tools from the MCP server
             mcp_tools_response = await session.list_tools()
-            allowed_tools = ["neo_web_json_fetch", "neo_data_jq_filter"]
+            allowed_tools = ["neonia.web.json.fetch", "neonia.data.jq.filter"]
             filtered_mcp_tools = [t for t in mcp_tools_response.tools if t.name in allowed_tools]
             
             # 3. Create LangChain tools wrapping MCP tool execution
             langchain_tools = []
             
             for mcp_tool in filtered_mcp_tools:
-                if mcp_tool.name == "neo_web_json_fetch":
+                if mcp_tool.name == "neonia.web.json.fetch":
                     def create_fetch_wrapper(mcp_name: str, mcp_desc: str):
-                        async def neo_web_json_fetch(url: str) -> str:
+                        async def neonia.web.json.fetch(url: str) -> str:
                             kwargs = {"url": url}
                             print(f"\n[Autonomy] Agent calls {mcp_name} with arguments: {json.dumps(kwargs)}")
                             try:
@@ -49,13 +49,13 @@ async def main():
                                 return "\n".join([c.text for c in result.content if c.type == "text"])
                             except Exception as e:
                                 return f"Error: {e}"
-                        neo_web_json_fetch.__name__ = mcp_name
-                        neo_web_json_fetch.__doc__ = mcp_desc
-                        return tool()(neo_web_json_fetch)
+                        neonia.web.json.fetch.__name__ = mcp_name
+                        neonia.web.json.fetch.__doc__ = mcp_desc
+                        return tool()(neonia.web.json.fetch)
                     langchain_tools.append(create_fetch_wrapper(mcp_tool.name, mcp_tool.description))
-                elif mcp_tool.name == "neo_data_jq_filter":
+                elif mcp_tool.name == "neonia.data.jq.filter":
                     def create_jq_wrapper(mcp_name: str, mcp_desc: str):
-                        async def neo_data_jq_filter(jq_query: str, data_url: str = None, raw_json: str = None, resource_uri: str = None) -> str:
+                        async def neonia.data.jq.filter(jq_query: str, data_url: str = None, raw_json: str = None, resource_uri: str = None) -> str:
                             kwargs = {"jq_query": jq_query}
                             if data_url is not None: kwargs["data_url"] = data_url
                             if raw_json is not None: kwargs["raw_json"] = raw_json
@@ -67,9 +67,9 @@ async def main():
                                 return "\n".join([c.text for c in result.content if c.type == "text"])
                             except Exception as e:
                                 return f"Error: {e}"
-                        neo_data_jq_filter.__name__ = mcp_name
-                        neo_data_jq_filter.__doc__ = mcp_desc
-                        return tool()(neo_data_jq_filter)
+                        neonia.data.jq.filter.__name__ = mcp_name
+                        neonia.data.jq.filter.__doc__ = mcp_desc
+                        return tool()(neonia.data.jq.filter)
                     langchain_tools.append(create_jq_wrapper(mcp_tool.name, mcp_tool.description))
             
             print(f"[System] Agent equipped with {len(langchain_tools)} foundational tools.")
@@ -88,8 +88,8 @@ async def main():
             system_prompt = SystemMessage(content=(
                 "You are an autonomous agent equipped with Neonia's data processing tools.\n"
                 "## Usage Guidelines\n"
-                "1. When asked to process JSON from a URL, ALWAYS use `neo_web_json_fetch` first. It will securely store the file and return a `resource_uri` and a TypeScript schema of the data.\n"
-                "2. Once you have the `resource_uri` and the schema, use `neo_data_jq_filter` to extract exactly what you need. Pass the `resource_uri` to the `resource_uri` parameter, and formulate a mathematically precise `jq_query` based on the schema.\n"
+                "1. When asked to process JSON from a URL, ALWAYS use `neonia.web.json.fetch` first. It will securely store the file and return a `resource_uri` and a TypeScript schema of the data.\n"
+                "2. Once you have the `resource_uri` and the schema, use `neonia.data.jq.filter` to extract exactly what you need. Pass the `resource_uri` to the `resource_uri` parameter, and formulate a mathematically precise `jq_query` based on the schema.\n"
                 "3. Write correct JQ queries. If the JSON has a wrapper object like `.posts`, use appropriate mapping. Example: `.posts[0:10] | map({title: .title, body: .body})`.\n"
                 "4. Self-Correction: If a tool returns an error, evaluate your parameters, fix them, and try again."
             ))
@@ -102,9 +102,9 @@ async def main():
                 if kind == "on_tool_start":
                     print(f"[Autonomy] Agent called tool: {event['name']}")
                 elif kind == "on_tool_end":
-                    if event["name"] == "neo_web_json_fetch":
+                    if event["name"] == "neonia.web.json.fetch":
                         print("[Autonomy] Fetched JSON successfully and received pointer!")
-                    elif event["name"] == "neo_data_jq_filter":
+                    elif event["name"] == "neonia.data.jq.filter":
                         print("[Autonomy] Filtered JSON successfully using JQ and pointer!")
 
             final_state = await agent_executor.ainvoke({"messages": messages})

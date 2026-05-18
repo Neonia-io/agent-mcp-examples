@@ -18,15 +18,15 @@ SYSTEM_PROMPT = """You are an Autonomous Manufacturing Architect. Your goal is t
 You NEVER handle raw SVG code. You only route tasks and URIs between your specialized Wasm tools to save context tokens.
 
 WORKFLOW RULES:
-1. GENERATE: Call `neo_util_svg_generator` with the user's prompt. 
+1. GENERATE: Call `neonia.util.svg.generator` with the user's prompt. 
    - Set `style_mode` to "monochrome_outline".
    - Set `stroke_width` to 1.0.
    - The tool will return a JSON object containing `svg_resource_uri`.
-2. VALIDATE: You MUST instantly call `neo_util_svg_validator` in your NEXT action. Pass the URI string EXACTLY as received into the `svg_resource_uri` parameter. 
+2. VALIDATE: You MUST instantly call `neonia.util.svg.validator` in your NEXT action. Pass the URI string EXACTLY as received into the `svg_resource_uri` parameter. 
 CRITICAL AUTOMATION RULE: Do NOT stop after generating. You must execute the validation tool call autonomously. Never present a final text answer until the validator returns `is_valid: true`.
 3. EVALUATE & HEAL (The Loop): 
    - If `is_valid` is true: You are done. Present the final URI to the user.
-   - If `is_valid` is false: Call `neo_util_svg_generator` AGAIN. 
+   - If `is_valid` is false: Call `neonia.util.svg.generator` AGAIN. 
    - Pass the broken URI and the exact errors array into the `validation_feedback` object. 
    - Ensure `stroke_width` is set to 1.0.
 4. Repeat steps 2 and 3 until the validator returns `is_valid: true`.
@@ -53,7 +53,7 @@ Output ONLY the raw <svg> code. Make the design look intricate, industrial, and 
 
 async def main():
     print("[System] Connecting to Neonia MCP Gateway...")
-    url = "https://mcp.neonia.io/mcp?tools=neo_util_svg_generator,neo_util_svg_validator"
+    url = "https://mcp.neonia.io/mcp?tools=neonia.util.svg.generator,neonia.util.svg.validator"
     
     headers = {}
     neonia_api_key = os.getenv("NEONIA_API_KEY")
@@ -70,19 +70,19 @@ async def main():
             print("[System] Connected successfully to Neonia MCP.\n")
 
             @tool
-            async def neo_util_svg_generator(prompt: str, style_mode: str, stroke_width: float = 1.0, validation_feedback: dict = None) -> str:
+            async def neonia.util.svg.generator(prompt: str, style_mode: str, stroke_width: float = 1.0, validation_feedback: dict = None) -> str:
                 "Generates SVG files from natural language descriptions. Returns a URI."
                 nonlocal latest_svg_uri
                 arguments = {"prompt": prompt, "style_mode": style_mode, "stroke_width": stroke_width}
                 if validation_feedback:
                     arguments["validation_feedback"] = validation_feedback
                 
-                print(f"\n[Autonomy] Agent calls neo_util_svg_generator with args:\n{json.dumps(arguments, indent=2)}")
+                print(f"\n[Autonomy] Agent calls neonia.util.svg.generator with args:\n{json.dumps(arguments, indent=2)}")
                 try:
-                    result = await session.call_tool("neo_util_svg_generator", arguments=arguments)
+                    result = await session.call_tool("neonia.util.svg.generator", arguments=arguments)
                     if result.isError: return f"Error: {result.content}"
                     tool_output = "\n".join([c.text for c in result.content if c.type == "text"])
-                    print(f"[Result] from neo_util_svg_generator: {tool_output}")
+                    print(f"[Result] from neonia.util.svg.generator: {tool_output}")
                     
                     try:
                         parsed = json.loads(tool_output)
@@ -95,10 +95,10 @@ async def main():
                 except Exception as e: return f"Error: {e}"
 
             @tool
-            async def neo_util_svg_validator(svg_resource_uri: str = None, svg_content: str = None, check_closed_paths: bool = True, check_intersections: bool = True, check_continuity: bool = True, min_segment_length: float = 0.1) -> str:
+            async def neonia.util.svg.validator(svg_resource_uri: str = None, svg_content: str = None, check_closed_paths: bool = True, check_intersections: bool = True, check_continuity: bool = True, min_segment_length: float = 0.1) -> str:
                 "A strict geometric linter for SVG code. Mathematically detects unclosed paths, self-intersections."
                 
-                print(f"\n[Autonomy] Agent calls neo_util_svg_validator with URI: {svg_resource_uri or svg_content}")
+                print(f"\n[Autonomy] Agent calls neonia.util.svg.validator with URI: {svg_resource_uri or svg_content}")
                 
                 arguments = {
                     "check_closed_paths": check_closed_paths,
@@ -113,14 +113,14 @@ async def main():
                 
                 
                 try:
-                    result = await session.call_tool("neo_util_svg_validator", arguments=arguments)
+                    result = await session.call_tool("neonia.util.svg.validator", arguments=arguments)
                     if result.isError: return f"Error: {result.content}"
                     tool_output = "\n".join([c.text for c in result.content if c.type == "text"])
-                    print(f"[Result] from neo_util_svg_validator: {tool_output}")
+                    print(f"[Result] from neonia.util.svg.validator: {tool_output}")
                     return tool_output
                 except Exception as e: return f"Error: {e}"
 
-            langchain_tools = [neo_util_svg_generator, neo_util_svg_validator]
+            langchain_tools = [neonia.util.svg.generator, neonia.util.svg.validator]
             
             if not os.getenv("OPENROUTER_API_KEY"):
                 print("[Warning] OPENROUTER_API_KEY is not set. Agent will fail.")

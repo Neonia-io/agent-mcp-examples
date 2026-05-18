@@ -10,7 +10,7 @@ from mcp.client.streamable_http import streamable_http_client
 load_dotenv()
 
 class CloudMemoryLessonTool(Tool):
-    name = "neo_sys_memory_lesson"
+    name = "neonia.sys.memory.lesson"
     description = "WRITE-ONLY: Store a hard-learned lesson, bug fix, or mandatory rule for future reference."
     inputs = {
         "observation": {"type": "string", "description": "OBSERVATION: What happened? The symptom or context"},
@@ -29,10 +29,10 @@ class CloudMemoryLessonTool(Tool):
     def forward(self, observation: str, root_cause: str, decision_rule: str, tags: list) -> str:
         arguments = {"observation": observation, "root_cause": root_cause, "decision_rule": decision_rule, "tags": tags}
         
-        print(f"\n[Memory Tool] Agent executed: neo_sys_memory_lesson")
+        print(f"\n[Memory Tool] Agent executed: neonia.sys.memory.lesson")
         async def call_mcp():
             try:
-                result = await self.session.call_tool("neo_sys_memory_lesson", arguments=arguments)
+                result = await self.session.call_tool("neonia.sys.memory.lesson", arguments=arguments)
                 if result.isError: return f"Error: {result.content}"
                 tool_output = "\n".join([c.text for c in result.content if c.type == "text"])
                 return f"{tool_output}\nSUCCESS: Memory saved. You MUST now stop calling tools and reply to the user with 'Acknowledged'."
@@ -44,7 +44,7 @@ class CloudMemoryLessonTool(Tool):
         return future.result()
 
 class CloudMemorySearchTool(Tool):
-    name = "neo_sys_memory_search"
+    name = "neonia.sys.memory.search"
     description = "READ-ONLY: Search the shared Swarm memory. Always use this before starting a task to check for prior knowledge, user preferences, and mandatory guidelines."
     inputs = {
         "query": {"type": "string", "description": "Semantic search query or keywords to look for."}
@@ -60,10 +60,10 @@ class CloudMemorySearchTool(Tool):
     def forward(self, query: str) -> str:
         arguments = {"query": query}
         
-        print(f"\n[Memory Tool] Agent executed: neo_sys_memory_search (query='{query}')")
+        print(f"\n[Memory Tool] Agent executed: neonia.sys.memory.search (query='{query}')")
         async def call_mcp():
             try:
-                result = await self.session.call_tool("neo_sys_memory_search", arguments=arguments)
+                result = await self.session.call_tool("neonia.sys.memory.search", arguments=arguments)
                 if result.isError: return f"Error: {result.content}"
                 tool_output = "\n".join([c.text for c in result.content if c.type == "text"])
                 return tool_output
@@ -77,7 +77,7 @@ class CloudMemorySearchTool(Tool):
 
 async def main():
     print("[System] Connecting to Neonia MCP Gateway with Cloud Memory...")
-    url = "https://mcp.neonia.io/mcp?tools=neo_sys_memory_lesson,neo_sys_memory_search"
+    url = "https://mcp.neonia.io/mcp?tools=neonia.sys.memory.lesson,neonia.sys.memory.search"
     
     headers = {}
     neonia_api_key = os.getenv("NEONIA_API_KEY")
@@ -105,9 +105,9 @@ async def main():
             system_prompt = (
                 "You are an autonomous agent equipped with Neonia Cloud Memory. "
                 "You suffer from amnesia between sessions. "
-                "CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neo_sys_memory_search` to fetch your architectural rules and lessons. "
+                "CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neonia.sys.memory.search` to fetch your architectural rules and lessons. "
                 "Do not answer the user without searching your memory first! "
-                "When explicitly asked to remember an architectural lesson, use `neo_sys_memory_lesson`."
+                "When explicitly asked to remember an architectural lesson, use `neonia.sys.memory.lesson`."
             )
 
             print("==================================================")

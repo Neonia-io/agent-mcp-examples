@@ -23,7 +23,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     println!("[System] Connecting to Neonia MCP Gateway with Cloud Memory...");
 
-    let url = "https://mcp.neonia.io/mcp?tools=neo_sys_memory_lesson,neo_sys_memory_search";
+    let url = "https://mcp.neonia.io/mcp?tools=neonia.sys.memory.lesson,neonia.sys.memory.search";
     let neonia_key = env::var("NEONIA_API_KEY").unwrap_or_default();
     
     let mut config = rmcp::transport::streamable_http_client::StreamableHttpClientTransportConfig::with_uri(url);
@@ -49,9 +49,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let system_prompt = "You are an autonomous agent equipped with Neonia Cloud Memory. \
                          You suffer from amnesia between sessions. \
-                         CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neo_sys_memory_search` to fetch your architectural rules and lessons. \
+                         CRITICAL: Before you answer ANY user prompt or take any actions, you MUST use `neonia.sys.memory.search` to fetch your architectural rules and lessons. \
                          Do not answer the user without searching your memory first! \
-                         When explicitly asked to remember an architectural lesson, use `neo_sys_memory_lesson`.";
+                         When explicitly asked to remember an architectural lesson, use `neonia.sys.memory.lesson`.";
 
     println!("==================================================");
     println!("SESSION 1: Storing an architectural lesson (Admin post-mortem)");

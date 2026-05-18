@@ -14,15 +14,15 @@ Agents are traditionally hard-coded with a static list of tools. If a user asks 
 
 #### 2. Solving Context Bloat (Zero-Bloat Data Processing)
 
-Traditionally, when an agent needs to extract data from a large 5MB JSON file, it loads the entire file into its context window, causing massive token consumption, high latency, and LLM "amnesia". By connecting to the Neonia MCP Gateway (`mcp.neonia.io/mcp?tools=neo_data_jq_filter`), our `zero-bloat-jq-filter` agents explicitly bind the **Wasm-powered JQ Filter** tool. The agent executes queries on the remote server and receives only the filtered result (e.g. `$651,758.23`), saving **~50,000+ tokens** per request and responding almost instantly.
+Traditionally, when an agent needs to extract data from a large 5MB JSON file, it loads the entire file into its context window, causing massive token consumption, high latency, and LLM "amnesia". By connecting to the Neonia MCP Gateway (`mcp.neonia.io/mcp?tools=neonia.data.jq.filter`), our `zero-bloat-jq-filter` agents explicitly bind the **Wasm-powered JQ Filter** tool. The agent executes queries on the remote server and receives only the filtered result (e.g. `$651,758.23`), saving **~50,000+ tokens** per request and responding almost instantly.
 
 #### 3. Stateful Memory Note (`stateful-cloud-memory`)
 
-Agents typically suffer from absolute amnesia between sessions. If a user states a preference or business rule, it is lost unless hardcoded into the system prompt. The `stateful-cloud-memory` examples demonstrate how to create stateful agents that use Neonia's Dual Memory Architecture (`neo_sys_memory_note` for writing and `neo_sys_memory_search` for reading) to dynamically store and recall rules (like custom personas or user preferences) across completely isolated sessions without needing a custom database.
+Agents typically suffer from absolute amnesia between sessions. If a user states a preference or business rule, it is lost unless hardcoded into the system prompt. The `stateful-cloud-memory` examples demonstrate how to create stateful agents that use Neonia's Dual Memory Architecture (`neonia.sys.memory.note` for writing and `neonia.sys.memory.search` for reading) to dynamically store and recall rules (like custom personas or user preferences) across completely isolated sessions without needing a custom database.
 
 #### 4. Persistent Knowledge Memory (`persistent-knowledge-memory`)
 
-When agents learn hard architectural lessons, bug fixes, or strict operational rules, they need a way to persist this knowledge using a strict Cause-and-Effect structure (ADR). The `persistent-knowledge-memory` examples demonstrate using the `neo_sys_memory_lesson` tool to save complex insights so future agents can fetch them using `neo_sys_memory_search` before starting their tasks.
+When agents learn hard architectural lessons, bug fixes, or strict operational rules, they need a way to persist this knowledge using a strict Cause-and-Effect structure (ADR). The `persistent-knowledge-memory` examples demonstrate using the `neonia.sys.memory.lesson` tool to save complex insights so future agents can fetch them using `neonia.sys.memory.search` before starting their tasks.
 
 _(More examples covering vision extraction, dynamic execution, and multi-agent orchestration will be added soon!)_
 
@@ -126,7 +126,7 @@ Demonstrates how to safely process massive API payloads using a deterministic Wa
 
 ### 3. Chained Data Execution (`chained-json-jq-filter`)
 
-Demonstrates how to safely process massive API payloads using a chained data workflow. The agent uses `neo_web_json_fetch` to retrieve remote JSON and stores it on the Gateway, returning a lightweight pointer. It then passes this pointer to a deterministic Wasm JQ filter (`neo_data_jq_filter`) to extract exactly what it needs, keeping its context window incredibly small.
+Demonstrates how to safely process massive API payloads using a chained data workflow. The agent uses `neonia.web.json.fetch` to retrieve remote JSON and stores it on the Gateway, returning a lightweight pointer. It then passes this pointer to a deterministic Wasm JQ filter (`neonia.data.jq.filter`) to extract exactly what it needs, keeping its context window incredibly small.
 
 - 📂 **[chained-json-jq-filter](./typescript/vercel-ai-sdk/chained-json-jq-filter/) (TypeScript / Vercel AI SDK)**
 - 📂 **[chained-json-jq-filter](./python/langgraph/chained-json-jq-filter/) (Python / LangGraph)**
@@ -135,7 +135,7 @@ Demonstrates how to safely process massive API payloads using a chained data wor
 
 ### 4. Stateful Memory Note (`stateful-cloud-memory`)
 
-Demonstrates how to use the Dual Memory Architecture (`neo_sys_memory_note` and `neo_sys_memory_search`) to allow an agent to remember personas or business rules across completely isolated sessions.
+Demonstrates how to use the Dual Memory Architecture (`neonia.sys.memory.note` and `neonia.sys.memory.search`) to allow an agent to remember personas or business rules across completely isolated sessions.
 
 - 📂 **[stateful-cloud-memory](./typescript/vercel-ai-sdk/stateful-cloud-memory/) (TypeScript / Vercel AI SDK)**
 - 📂 **[stateful-cloud-memory](./python/langgraph/stateful-cloud-memory/) (Python / LangGraph)**
@@ -144,7 +144,7 @@ Demonstrates how to use the Dual Memory Architecture (`neo_sys_memory_note` and 
 
 ### 5. Persistent Knowledge Memory (`persistent-knowledge-memory`)
 
-Demonstrates how to use the Dual Memory Architecture (`neo_sys_memory_lesson` and `neo_sys_memory_search`) to allow an agent to record hard architectural lessons in a cause-and-effect format and retrieve them dynamically on new tasks.
+Demonstrates how to use the Dual Memory Architecture (`neonia.sys.memory.lesson` and `neonia.sys.memory.search`) to allow an agent to record hard architectural lessons in a cause-and-effect format and retrieve them dynamically on new tasks.
 
 - 📂 **[persistent-knowledge-memory](./typescript/vercel-ai-sdk/persistent-knowledge-memory/) (TypeScript / Vercel AI SDK)**
 - 📂 **[persistent-knowledge-memory](./python/langgraph/persistent-knowledge-memory/) (Python / LangGraph)**
