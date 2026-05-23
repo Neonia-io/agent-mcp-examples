@@ -102,7 +102,7 @@ async def main():
             print("[System] Starting task...\n")
 
             model = LiteLLMModel(
-                model_id="openrouter/anthropic/claude-3.7-sonnet",
+                model_id="openrouter/anthropic/claude-sonnet-4.6",
                 api_key=os.getenv("OPENROUTER_API_KEY")
             )
             

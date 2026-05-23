@@ -46,13 +46,13 @@ async function main() {
                         console.error(`[Error] Tool returned error:`, result.content);
                         return `Error: ${JSON.stringify(result.content as any)}`;
                     }
-                    
+
                     // Extract text content directly as a string to avoid OpenRouter parsing errors
                     const content = result.content as any[];
                     const textParts = content
                         .filter(c => c.type === 'text')
                         .map(c => c.text);
-                    
+
                     return textParts.join('\n');
                 } catch (error) {
                     console.error(`[Error] Execution error in ${mcpTool.name}:`, error);
@@ -67,22 +67,22 @@ async function main() {
 
     // 3. Run Agent
     const targetUrl = "https://dummyjson.com/carts";
-    
+
     const openrouter = createOpenRouter({
         apiKey: process.env.OPENROUTER_API_KEY,
     });
-    
+
     const result = await generateText({
-        model: openrouter('anthropic/claude-3.7-sonnet'),
+        model: openrouter('anthropic/claude-sonnet-4.6'),
         tools: tools,
         stopWhen: stepCountIs(5),
         system: "You are an autonomous agent equipped with the neonia_data_jq_filter tool.\n" +
-                "CRITICAL SYSTEM TOOL: This is a core data manipulation capability. ALWAYS use this to extract specific fields or filter arrays from large JSON files instead of trying to parse them entirely inside your context window or hallucinating data structures.\n" +
-                "## Usage Guidelines\n" +
-                "1. Prefer data_url for large files: If you need to read JSON from a URL (e.g. an API endpoint), pass the URL to data_url and the tool will fetch and process it natively in its memory, completely bypassing your token limits.\n" +
-                "2. Use raw_json for existing data: If you already have the data in a variable or context and just need to query it, pass it as a string to raw_json.\n" +
-                "3. Write correct JQ queries: Pass the filter to jq_query. Examples: .[] | .id, .users[0].name, map(select(.active == true)).\n" +
-                "4. Self-Correction: If the tool returns 'Invalid JQ syntax. Please correct your query.', evaluate your query string, fix the syntax error, and call the tool again.",
+            "CRITICAL SYSTEM TOOL: This is a core data manipulation capability. ALWAYS use this to extract specific fields or filter arrays from large JSON files instead of trying to parse them entirely inside your context window or hallucinating data structures.\n" +
+            "## Usage Guidelines\n" +
+            "1. Prefer data_url for large files: If you need to read JSON from a URL (e.g. an API endpoint), pass the URL to data_url and the tool will fetch and process it natively in its memory, completely bypassing your token limits.\n" +
+            "2. Use raw_json for existing data: If you already have the data in a variable or context and just need to query it, pass it as a string to raw_json.\n" +
+            "3. Write correct JQ queries: Pass the filter to jq_query. Examples: .[] | .id, .users[0].name, map(select(.active == true)).\n" +
+            "4. Self-Correction: If the tool returns 'Invalid JQ syntax. Please correct your query.', evaluate your query string, fix the syntax error, and call the tool again.",
         prompt: `Find the total discountedTotal for all carts at this URL: ${targetUrl}`,
         onStepFinish: (step) => {
             const toolCalls = step.toolCalls.map(t => t.toolName).join(", ");

@@ -46,13 +46,13 @@ async function main() {
                         console.error(`[Error] Tool returned error:`, result.content);
                         return `Error: ${JSON.stringify(result.content as any)}`;
                     }
-                    
+
                     // Extract text content directly as a string to avoid OpenRouter parsing errors
                     const content = result.content as any[];
                     const textParts = content
                         .filter(c => c.type === 'text')
                         .map(c => c.text);
-                    
+
                     return textParts.join('\n');
                 } catch (error) {
                     console.error(`[Error] Execution error in ${mcpTool.name}:`, error);
@@ -67,21 +67,21 @@ async function main() {
 
     // 3. Run Agent
     const targetUrl = "https://dummyjson.com/posts";
-    
+
     const openrouter = createOpenRouter({
         apiKey: process.env.OPENROUTER_API_KEY,
     });
-    
+
     const result = await generateText({
-        model: openrouter('anthropic/claude-3.7-sonnet'),
+        model: openrouter('anthropic/claude-sonnet-4.6'),
         tools: tools,
         stopWhen: stepCountIs(5),
         system: "You are an autonomous agent equipped with Neonia's data processing tools.\n" +
-                "## Usage Guidelines\n" +
-                "1. When asked to process JSON from a URL, ALWAYS use `neonia_web_json_fetch` first. It will securely store the file and return a `resource_uri` and a TypeScript schema of the data.\n" +
-                "2. Once you have the `resource_uri` and the schema, use `neonia_data_jq_filter` to extract exactly what you need. Pass the `resource_uri` to the `resource_uri` parameter, and formulate a mathematically precise `jq_query` based on the schema.\n" +
-                "3. Write correct JQ queries. If the JSON has a wrapper object like `.posts`, use appropriate mapping. Example: `.posts[0:10] | map({title: .title, body: .body})`.\n" +
-                "4. Self-Correction: If a tool returns an error, evaluate your parameters, fix them, and try again.",
+            "## Usage Guidelines\n" +
+            "1. When asked to process JSON from a URL, ALWAYS use `neonia_web_json_fetch` first. It will securely store the file and return a `resource_uri` and a TypeScript schema of the data.\n" +
+            "2. Once you have the `resource_uri` and the schema, use `neonia_data_jq_filter` to extract exactly what you need. Pass the `resource_uri` to the `resource_uri` parameter, and formulate a mathematically precise `jq_query` based on the schema.\n" +
+            "3. Write correct JQ queries. If the JSON has a wrapper object like `.posts`, use appropriate mapping. Example: `.posts[0:10] | map({title: .title, body: .body})`.\n" +
+            "4. Self-Correction: If a tool returns an error, evaluate your parameters, fix them, and try again.",
         prompt: `Fetch the JSON from ${targetUrl}, then use the jq filter to extract the title and body of the first 10 posts. Finally, provide a brief summary of the posts.`,
         onStepFinish: (step) => {
             const toolCalls = step.toolCalls.map(t => t.toolName).join(", ");

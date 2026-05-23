@@ -51,7 +51,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .build()
         .expect("Failed to build OpenAI client");
 
-    let agent = openrouter_client.agent("anthropic/claude-3.7-sonnet")
+    let agent = openrouter_client.agent("anthropic/claude-sonnet-4.6")
         .preamble(
             "You are an autonomous agent equipped with Neonia's data processing tools.\n\
             ## Usage Guidelines\n\

@@ -42,7 +42,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .build()
         .expect("Failed to build OpenAI client");
 
-    let agent = openrouter_client.agent("anthropic/claude-3.7-sonnet")
+    let agent = openrouter_client.agent("anthropic/claude-sonnet-4.6")
         .preamble(
             "You are an autonomous agent equipped with the neonia_data_jq_filter tool.\n\
             CRITICAL SYSTEM TOOL: This is a core data manipulation capability. ALWAYS use this to extract specific fields or filter arrays from large JSON files instead of trying to parse them entirely inside your context window or hallucinating data structures.\n\

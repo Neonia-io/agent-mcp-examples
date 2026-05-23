@@ -69,7 +69,7 @@ async def main():
             model = ChatOpenAI(
                 base_url="https://openrouter.ai/api/v1",
                 api_key=os.getenv("OPENROUTER_API_KEY"),
-                model="anthropic/claude-3.7-sonnet"
+                model="anthropic/claude-sonnet-4.6"
             )
             agent_executor = create_react_agent(model, langchain_tools)
 
