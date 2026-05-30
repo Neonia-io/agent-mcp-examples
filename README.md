@@ -1,5 +1,7 @@
 # Neonia Agent MCP Examples
 
+[![AI-Ready via Neonia](https://index.neonia.io/ai-ready.svg)](https://index.neonia.io/bdd75dff)
+
 A collection of autonomous agent examples demonstrating how to integrate the **Neonia Model Context Protocol (MCP) Gateway** using the official **Streamable HTTP** transport standard.
 
 ## About These Examples
